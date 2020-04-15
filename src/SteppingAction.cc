@@ -20,26 +20,6 @@
 
 using namespace std;
 using namespace CLHEP;
-/*
-SteppingAction::SteppingAction (const string& configFileName)
-{
-  //---------------------------------------
-  //------------- Parameters --------------
-  //---------------------------------------
-  
-  ConfigFile config (configFileName) ;
-
-  config.readInto(core_material, "core_material"); 
-
-  if (core_material == 0)
-  {
-	  config.readInto(toy_ly,	"toy_ly");
-	  config.readInto(toy_decay,	"toy_decay");
-	  config.readInto(toy_rise,	"toy_rise");
-  }
-  
-
-}*/
 
 
 
@@ -95,6 +75,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
   G4VPhysicalVolume * thePostPV = thePostPoint->GetPhysicalVolume () ;
   G4String thePrePVName  = "" ; if ( thePrePV )  thePrePVName  = thePrePV  -> GetName () ;
   G4String thePostPVName = "" ; if ( thePostPV ) thePostPVName = thePostPV -> GetName () ;
+  std::cout<<thePrePVName<<std::endl;
 
 //  G4VSolid* thePreS = thePrePV->GetLogicalVolume()->GetSolid();
     
@@ -131,7 +112,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
 	//std::cout<<"leaving "<<std::endl;
 	CreateTree::Instance() -> depositedEnergyEscapeWorld += (theStep->GetPostStepPoint())->GetKineticEnergy()/GeV;
       }
-      //}
+
 
   
   // optical photon
@@ -165,18 +146,6 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
 
 
 
-      else if (thePrePVName.contains("corePV_front"))
-      {      
-	CreateTree::Instance()->tot_phot_cer_Timing_f += 1;
-        CreateTree::Instance()->h_phot_cer_lambda_Timing_f -> Fill( photWL );
-
-
-      }
-      else if (thePrePVName.contains("corePV_rear"))
-      {      
-	CreateTree::Instance()->tot_phot_cer_Timing_r += 1;
-        CreateTree::Instance()->h_phot_cer_lambda_Timing_r -> Fill( photWL );
-      }
 
       else if (thePrePVName.contains("ecalCrystalP_f"))
       {      
@@ -197,100 +166,8 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
 
     else{
 
-   //count tracks before SCEPCAL at the tracker layers
-    if (  thePrePVName.contains("world") && thePostPVName.contains("trackerPV_Layer")    )	// interface between T1 and T2
-   {
-        for (int iLayer = 0; iLayer<6; iLayer++)
-	{
-		if (thePostPVName == Form("trackerPV_Layer%d", iLayer)    )	// interface between T1 and T2
-	        CreateTree::Instance() -> nTracksTRK[iLayer] ++;   //counting tracks crossing the boundary
-	}
-   }
 
 
-    //save primary particle position and momentum before timing layer T1 and before ECAL E1
-    else if ( thePrePVName.contains("world") && thePostPVName.contains("corePV_front")  ) // interface between world and T1
-   {
- 
-        CreateTree::Instance() -> nTracksT1 ++;   //counting tracks crossing the boundary
-
-	if ( theTrack->GetParentID() == 0 )	// select only the primary particle
-	{
-	        CreateTree::Instance() -> primaryPosT1->at(0) = global_x;
-	        CreateTree::Instance() -> primaryPosT1->at(1) = global_y;
-	        CreateTree::Instance() -> primaryPosT1->at(2) = global_z;
-
-	        CreateTree::Instance() -> primaryMomT1->at(0) = thePrePoint->GetMomentum().x()/GeV;
-        	CreateTree::Instance() -> primaryMomT1->at(1) = thePrePoint->GetMomentum().y()/GeV;
-	        CreateTree::Instance() -> primaryMomT1->at(2) = thePrePoint->GetMomentum().z()/GeV;
-	        CreateTree::Instance() -> primaryMomT1->at(3) = thePrePoint->GetTotalEnergy()/GeV;
-	}
-   }
-
-    else if (  thePrePVName.contains("world") && thePostPVName.contains("corePV_rear")    )	// interface between T1 and T2
-   {
-        CreateTree::Instance() -> nTracksT2 ++;   //counting tracks crossing the boundary
-   }
-
-
-    else if ( 	( thePrePVName.contains("world")  || thePrePVName.contains("ecalGapP_f") || thePrePVName.contains("ecalDetP_f") ) 
-		&& thePostPVName.contains("ecalCrystalP_f") 	// interface between world and E1
-       )
-   {
-        CreateTree::Instance() -> nTracksE1 ++;   //counting tracks crossing the boundary
-
-	if ( theTrack->GetParentID() == 0 )	// select only the primary particle
-	{
-	        CreateTree::Instance() -> primaryPosE1->at(0) = global_x;
-	        CreateTree::Instance() -> primaryPosE1->at(1) = global_y;
-	        CreateTree::Instance() -> primaryPosE1->at(2) = global_z;
-
-	        CreateTree::Instance() -> primaryMomE1->at(0) = thePrePoint->GetMomentum().x()/GeV;
-        	CreateTree::Instance() -> primaryMomE1->at(1) = thePrePoint->GetMomentum().y()/GeV;
-	        CreateTree::Instance() -> primaryMomE1->at(2) = thePrePoint->GetMomentum().z()/GeV;
-	        CreateTree::Instance() -> primaryMomE1->at(3) = thePrePoint->GetTotalEnergy()/GeV;
-	}
-   }
-
-    else if ( 	( thePrePVName.contains("ecalCrystalP_f") || thePrePVName.contains("world") )
-		&& thePostPVName.contains("ecalCrystalP_r"  )	
-       )// interface between E1 and E2
-   {
-        CreateTree::Instance() -> nTracksE2 ++;   //counting tracks crossing the boundary
-   }
-
-
-
-    //tracker
-    if( thePrePVName.contains("trackerPV_Layer") )
-    {
-      for (int iLayer = 0; iLayer<6; iLayer++)
-      {
-	if (thePrePVName == Form("trackerPV_Layer%d", iLayer)) CreateTree::Instance()->Edep_Tracker_layer[iLayer] += energy/GeV;
-      }
-    }
-
-    //timing
-    if( thePrePVName.contains("corePV_front") )
-    {
-      CreateTree::Instance()->depositedEnergyTiming_f += energy/GeV;
-      CreateTree::Instance()->depositedIonEnergyTiming_f += energyIon/GeV;
-      CreateTree::Instance()->depositedElecEnergyTiming_f += energyElec/GeV;
-      for (int iBar = 0; iBar<18; iBar++)
-      {
-	if (thePrePVName == Form("corePV_front_%d", iBar)) CreateTree::Instance()->Edep_Timing_f_ch[iBar] += energy/GeV;
-      }
-    }
-    if( thePrePVName.contains("corePV_rear") )
-    {
-      CreateTree::Instance()->depositedEnergyTiming_r += energy/GeV;
-      CreateTree::Instance()->depositedIonEnergyTiming_r += energyIon/GeV;
-      CreateTree::Instance()->depositedElecEnergyTiming_r += energyElec/GeV;
-      for (int iBar = 0; iBar<18; iBar++)
-      {
-	if (thePrePVName == Form("corePV_rear_%d", iBar)) CreateTree::Instance()->Edep_Timing_r_ch[iBar] += energy/GeV;
-      }	
-    }
 
     //ecal
     if( thePrePVName.contains("ecalCrystalP_f") )
@@ -326,21 +203,8 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
 
 
 
-    if( thePrePVName.contains("services") )
-    {
-      CreateTree::Instance() -> depositedEnergyServices += energy/GeV;
-      CreateTree::Instance() -> depositedIonEnergyServices += energyIon/GeV;
-      CreateTree::Instance() -> depositedElecEnergyServices += energyElec/GeV;
-    }
 
     
-
-    if( thePrePVName.contains("TimingGap") )
-    {
-      CreateTree::Instance() -> depositedEnergyTimingGap += energy/GeV;
-      CreateTree::Instance() -> depositedIonEnergyTimingGap += energyIon/GeV;
-      CreateTree::Instance() -> depositedElecEnergyTimingGap += energyElec/GeV;
-    }
 
 
     if( thePrePVName.contains("ecalGap") )
@@ -356,14 +220,6 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
       CreateTree::Instance() -> depositedEnergyEcalDet += energy/GeV;
       CreateTree::Instance() -> depositedIonEnergyEcalDet += energyIon/GeV;
       CreateTree::Instance() -> depositedElecEnergyEcalDet += energyElec/GeV;
-    }
-
-
-    if( thePrePVName.contains("solenoid") )
-    {
-      CreateTree::Instance() -> depositedEnergySolenoid += energy/GeV;
-      CreateTree::Instance() -> depositedIonEnergySolenoid += energyIon/GeV;
-      CreateTree::Instance() -> depositedElecEnergySolenoid += energyElec/GeV;
     }
 
 
