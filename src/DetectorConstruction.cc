@@ -113,8 +113,8 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
   
   B_field_intensity = config.read<double>("B_field_intensity") * tesla ;
   
-  expHall_x = 300.*cm;
-  expHall_y = 300.*cm;
+  expHall_x = 450.*cm;
+  expHall_y = 450.*cm;
   expHall_z = 300.*cm;
   
   B_field_IsInitialized = false ;
@@ -198,7 +198,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   
 
   // ECAL physical placement
-  const int NECAL_CRYST = 2500;
+  //const int NECAL_CRYST = 2500;
+  const int NECAL_CRYST = 25;
   G4VPhysicalVolume* ecalCrystalP_f[NECAL_CRYST];
   G4VPhysicalVolume* ecalCrystalP_r[NECAL_CRYST];
 //  G4VPhysicalVolume* ecalAlveolaP[121];
