@@ -99,7 +99,7 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
   config.readInto(ecal_det_size,	"ecal_det_size");
   
   config.readInto(depth,			"depth");
-  config.readInto(services_thick,	"services_thick");
+
 
   config.readInto(ecal_material, 	"ecal_material");
   config.readInto(ecal_front_length,"ecal_front_length");
@@ -107,15 +107,19 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
   config.readInto(ecal_front_face,	"ecal_front_face");
   config.readInto(ecal_rear_face,	"ecal_rear_face");
   config.readInto(ecal_timing_distance,	"ecal_timing_distance");
-
+  config.readInto(ecal_n_cell,"ecal_n_cell");
 
 
   
   B_field_intensity = config.read<double>("B_field_intensity") * tesla ;
   
-  expHall_x = 450.*cm;
-  expHall_y = 450.*cm;
-  expHall_z = 300.*cm;
+  //expHall_x = 450.*cm;
+  //expHall_y = 450.*cm;
+  //expHall_z = 300.*cm;
+
+  expHall_x = sqrt(ecal_n_cell)*ecal_front_length*3;
+  expHall_y = sqrt(ecal_n_cell)*ecal_front_length*3;
+  expHall_z = 3*(ecal_front_length+ecal_rear_length);
   
   B_field_IsInitialized = false ;
   
@@ -156,7 +160,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   
   // The experimental Hall
   // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-  G4VSolid * worldS = new G4Box ("worldS", 5 * expHall_x, 5 * expHall_y, 5 * expHall_z) ;
+  G4VSolid * worldS = new G4Box ("worldS", 3 * expHall_x, 3 * expHall_y, 6 * expHall_z) ;
   G4LogicalVolume * worldLV = new G4LogicalVolume (worldS, WoMaterial, "worldLV", 0, 0, 0) ;
   G4VPhysicalVolume * worldPV = new G4PVPlacement (0, G4ThreeVector (), worldLV, "worldPV", 0, false, 0, checkOverlaps) ;
 
@@ -199,7 +203,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
 
   // ECAL physical placement
   //const int NECAL_CRYST = 2500;
-  const int NECAL_CRYST = 25;
+
+  const int NECAL_CRYST = ecal_n_cell;
+
   G4VPhysicalVolume* ecalCrystalP_f[NECAL_CRYST];
   G4VPhysicalVolume* ecalCrystalP_r[NECAL_CRYST];
 //  G4VPhysicalVolume* ecalAlveolaP[121];

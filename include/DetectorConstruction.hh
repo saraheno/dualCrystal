@@ -91,11 +91,7 @@ private:
   G4double bar_length;      
   G4int    detector;
   
-  G4double core_radius_x;
-  G4double core_radius_y;
-  G4int    core_material;
-  G4double core_rIndex;
-  G4double core_absLength;
+
   
   G4int    gap_material;
   G4double gap_l;
@@ -104,13 +100,11 @@ private:
   
   G4int    det_material;
   G4double det_l;
-  G4double det_size_x;
-  G4double det_size_y;
+
     
   G4double depth;
   G4double cryst_dist;
-  G4double trackerX0;
-  G4double services_thick;
+
 
   G4int ecal_material;
   G4double ecal_front_length;
@@ -119,7 +113,7 @@ private:
   G4double ecal_rear_face;
   G4double ecal_timing_distance;
   G4double ecal_det_size;
-
+  G4int ecal_n_cell;
 
   
   G4UniformMagField* B_field;
