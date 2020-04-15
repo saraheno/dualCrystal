@@ -120,12 +120,7 @@ private:
   G4double ecal_timing_distance;
   G4double ecal_det_size;
 
-  G4double hcal_width;
-  G4double hcalTile_width;
-  G4double hcalAbs_1_thick;
-  G4double hcalAbs_2_thick;
-  G4double solenoid_thick;
-  G4double hcalTile_thick;
+
   
   G4UniformMagField* B_field;
   G4bool   B_field_IsInitialized; 

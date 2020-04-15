@@ -188,11 +188,6 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
 	CreateTree::Instance()->tot_phot_cer_ECAL_r += 1;
         CreateTree::Instance()->h_phot_cer_lambda_ECAL_r -> Fill( photWL );
       }
-      else if (thePrePVName.contains("hcalTile_layer"))
-      {      
-	CreateTree::Instance()->tot_phot_cer_HCAL += 1;
-        CreateTree::Instance()->h_phot_cer_lambda_HCAL -> Fill( photWL );
-      }
 
 
       if( !propagateCerenkov ) theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
@@ -320,27 +315,6 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     }    
 
 
-    //hcal
-    if( thePrePVName.contains("hcalTile_layer") )
-    {
-       CreateTree::Instance()->depositedEnergyHCALAct += energy/GeV;
-       CreateTree::Instance()->depositedIonEnergyHCALAct += energyIon/GeV;
-       CreateTree::Instance()->depositedElecEnergyHCALAct += energyElec/GeV;
-//      for (int iLayer = 0; iLayer<100; iLayer++)
-  //    {
-//	if (thePrePVName == Form("ecalCrystalP_f_%d", iCh)) CreateTree::Instance()->Edep_ECAL_f_ch[iLayer] += energy/GeV;
-//      }
-    }
-    if( thePrePVName.contains("hcalAbs") )
-    {
-       CreateTree::Instance()->depositedEnergyHCALPas += energy/GeV;
-       CreateTree::Instance()->depositedIonEnergyHCALPas += energyIon/GeV;
-       CreateTree::Instance()->depositedElecEnergyHCALPas += energyElec/GeV;
-//      for (int iLayer = 0; iLayer<100; iLayer++)
-  //    {
-//	if (thePrePVName == Form("ecalCrystalP_f_%d", iCh)) CreateTree::Instance()->Edep_ECAL_f_ch[iLayer] += energy/GeV;
-//      }
-    }
 
 
     if( thePrePVName.contains("world") )
