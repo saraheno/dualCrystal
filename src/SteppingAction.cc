@@ -70,7 +70,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
   
   G4StepPoint * thePrePoint  = theStep->GetPreStepPoint () ;
   G4StepPoint * thePostPoint = theStep->GetPostStepPoint () ;
-  const G4ThreeVector & thePrePosition  = thePrePoint->GetPosition () ;
+  //  const G4ThreeVector & thePrePosition  = thePrePoint->GetPosition () ;
   G4VPhysicalVolume * thePrePV  = thePrePoint->GetPhysicalVolume () ;
   G4VPhysicalVolume * thePostPV = thePostPoint->GetPhysicalVolume () ;
   G4String thePrePVName  = "" ; if ( thePrePV )  thePrePVName  = thePrePV  -> GetName () ;
@@ -88,9 +88,6 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
   //-------------
  
   // get position
-  G4double global_x = thePrePosition.x()/mm;
-  G4double global_y = thePrePosition.y()/mm;
-  G4double global_z = thePrePosition.z()/mm;
   
 
     G4double energy = theStep->GetTotalEnergyDeposit();

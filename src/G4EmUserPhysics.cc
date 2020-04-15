@@ -96,9 +96,9 @@ void G4EmUserPhysics::ConstructProcess()
   theMieHGScatteringProcess = new G4OpMieHG();
   theBoundaryProcess = new G4OpBoundaryProcess();
   
-  //theCerenkovProcess->DumpPhysicsTable();
-  //theScintillationProcess->DumpPhysicsTable();
-  //theRayleighScatteringProcess->DumpPhysicsTable();
+  theCerenkovProcess->DumpPhysicsTable();
+  theScintillationProcess->DumpPhysicsTable();
+  theRayleighScatteringProcess->DumpPhysicsTable();
   
   theCerenkovProcess->SetMaxNumPhotonsPerStep(20);
   theCerenkovProcess->SetMaxBetaChangePerStep(10.0);

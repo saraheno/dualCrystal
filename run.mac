@@ -8,10 +8,10 @@
 # cosmics
 /gps/energy 20 GeV
 #/gps/particle mu-
-/gps/particle pi-
+#/gps/particle pi-
 
 #/gps/particle gamma
-#/gps/particle e-
+/gps/particle e-
 
 /gps/pos/type Plane
 /gps/pos/shape Square
@@ -51,4 +51,4 @@
 #/gps/ang/type iso
 
 
-/run/beamOn 2
+/run/beamOn 200
