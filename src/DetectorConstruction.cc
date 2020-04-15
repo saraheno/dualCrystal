@@ -95,12 +95,10 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
   config.readInto(gap_material,  	"gap_material");
   
   config.readInto(det_l,         		"det_l");
-  config.readInto(det_size_x,    	"det_size_x");
-  config.readInto(det_size_y,    	"det_size_y");
   config.readInto(det_material,  	"det_material");
+  config.readInto(ecal_det_size,	"ecal_det_size");
   
   config.readInto(depth,			"depth");
-  config.readInto(cryst_dist,		"cryst_dist");
   config.readInto(services_thick,	"services_thick");
 
   config.readInto(ecal_material, 	"ecal_material");
@@ -109,7 +107,7 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
   config.readInto(ecal_front_face,	"ecal_front_face");
   config.readInto(ecal_rear_face,	"ecal_rear_face");
   config.readInto(ecal_timing_distance,	"ecal_timing_distance");
-  config.readInto(ecal_det_size,	"ecal_det_size");
+
 
 
   

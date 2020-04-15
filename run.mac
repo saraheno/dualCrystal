@@ -6,7 +6,7 @@
 # initialization of G4GeneralParticleSource
 
 # cosmics
-/gps/energy 20 GeV
+/gps/energy 5 GeV
 #/gps/particle mu-
 #/gps/particle pi-
 
@@ -51,4 +51,4 @@
 #/gps/ang/type iso
 
 
-/run/beamOn 200
+/run/beamOn 2
