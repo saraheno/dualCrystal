@@ -75,7 +75,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
   G4VPhysicalVolume * thePostPV = thePostPoint->GetPhysicalVolume () ;
   G4String thePrePVName  = "" ; if ( thePrePV )  thePrePVName  = thePrePV  -> GetName () ;
   G4String thePostPVName = "" ; if ( thePostPV ) thePostPVName = thePostPV -> GetName () ;
-  std::cout<<thePrePVName<<std::endl;
+  //  std::cout<<thePrePVName<<std::endl;
 
 //  G4VSolid* thePreS = thePrePV->GetLogicalVolume()->GetSolid();
     
