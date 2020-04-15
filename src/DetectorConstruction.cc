@@ -174,18 +174,14 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
 
 
 
-  double pointingAngle = 0.;	//~0.36° -- arctan (29.31/4720)
+  double pointingAngle = 0.;
   double alveola_thickness = 0.2*mm;
 
   
   // ECAL solid
   G4Trd* ecalCrystalS_f = new G4Trd("ecalCrystalS_f",0.5*ecal_front_face, 0.5*ecal_rear_face, 0.5*ecal_front_face , 0.5*ecal_rear_face, 0.5*ecal_front_length);
   G4Trd* ecalCrystalS_r = new G4Trd("ecalCrystalS_r",0.5*ecal_front_face, 0.5*ecal_rear_face, 0.5*ecal_front_face , 0.5*ecal_rear_face, 0.5*ecal_rear_length);
-
-
-
   G4Box* ecalGapS      = new G4Box("ecalGapS",      ecal_det_size*0.5, ecal_det_size*0.5, 0.5*(gap_l-depth) );
-
   G4Box* ecalDetS      = new G4Box("ecalDetS",      ecal_det_size*0.5, ecal_det_size*0.5, 0.5*(det_l-depth));
   
   
@@ -193,10 +189,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   G4LogicalVolume* ecalCrystalL_f = new G4LogicalVolume(ecalCrystalS_f, EcalMaterial, "ecalCrystalL_f", 0, 0, 0);
   G4LogicalVolume* ecalCrystalL_r = new G4LogicalVolume(ecalCrystalS_r, EcalMaterial, "ecalCrystalL_r", 0, 0, 0);
 
-  
-
+  // gaps
   G4LogicalVolume* ecalGapL	 = new G4LogicalVolume(ecalGapS, GaMaterial, "ecalGapL", 0, 0, 0);
-
+  // photodetector
   G4LogicalVolume* ecalDetL      = new G4LogicalVolume(ecalDetS, DeMaterial, "ecalDetL", 0, 0, 0);
 
   
@@ -208,13 +203,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
 
   G4VPhysicalVolume* ecalCrystalP_f[NECAL_CRYST];
   G4VPhysicalVolume* ecalCrystalP_r[NECAL_CRYST];
-//  G4VPhysicalVolume* ecalAlveolaP[121];
-
-//  G4VPhysicalVolume* ecalGapLayerP[121];
   G4VPhysicalVolume* ecalGapP_f[NECAL_CRYST];
   G4VPhysicalVolume* ecalGapP_r[NECAL_CRYST];
-  
-  //G4VPhysicalVolume* ecalDetLayerP[121];
   G4VPhysicalVolume* ecalDetP_f[NECAL_CRYST];
   G4VPhysicalVolume* ecalDetP_r[NECAL_CRYST];
   
@@ -225,20 +215,26 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   int nArrayECAL = (int) sqrt(NECAL_CRYST);
 
   int iCrystal;
+  double off;
   for (int iX = 0; iX < nArrayECAL; iX ++)
   {
     for (int iY = 0; iY < nArrayECAL; iY ++)
     {
       
       iCrystal = nArrayECAL*iX + iY;
-      x_pos[iCrystal] = (iX-nArrayECAL/2)*(ecal_front_face + alveola_thickness);	// position the baricenter of crystals and then rotating them by
-      y_pos[iCrystal] =( iY-nArrayECAL/2)*(ecal_front_face + alveola_thickness);
       
+      y_pos[iCrystal] =( iY-nArrayECAL/2)*(ecal_front_face + alveola_thickness);
+      off=0;
+      if(iY % 2 != 0) off=0.5;
+      x_pos[iCrystal] = (iX-off-nArrayECAL/2)*(ecal_front_face + alveola_thickness);    
+
       G4RotationMatrix* piRotEcal = new G4RotationMatrix;
       piRotEcal->rotateY(-pointingAngle*rad*(iX + 0.5));
       piRotEcal->rotateX(pointingAngle*rad*(iY + 0.5));
 
-      cout << " x_pos [" <<iCrystal << "] = " << x_pos[iCrystal] << " :: y_pos[" << iCrystal << "] = " << y_pos[iCrystal] << " :: angle = [" << pointingAngle*iX << ", " << pointingAngle*iY << "] " << endl;
+      
+
+      cout << " x_pos [" <<setw(3)<<iCrystal << "] = " <<setw(8)<< x_pos[iCrystal] << " :: y_pos[" <<setw(3)<< iCrystal << "] = " <<setw(8)<<y_pos[iCrystal] <<" "<<iX<<" "<<iY<<" "<<off<< endl;
       
       sprintf(name, "ecalCrystalP_f_%d", iCrystal);
       ecalCrystalP_f[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_timing_distance+ecal_front_length*0.5), ecalCrystalL_f, name, worldLV, false, 0);
