@@ -146,7 +146,7 @@ private:
   G4double wSigmaalpha;
   G4double wLambertian;
   G4double wBackscatter;
-  int wrappingSurfinish;
+  int crystalSurfinish;
   TString cReffile;
   G4double cReflectivity;
   G4double cSurrefind;
@@ -156,7 +156,7 @@ private:
   G4double cSigmaalpha;
   G4double cLambertian;
   G4double cBackscatter;
-  int crystalSurfinish;
+
   TString RefFile;
   G4double reflectivity;
   G4double surrefind;

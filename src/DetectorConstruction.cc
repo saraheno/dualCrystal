@@ -122,7 +122,7 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
   config.readInto(wSpecularlobe, "wSpecularlobe");
   config.readInto(wSigmaalpha, "wSigmaalpha");
   config.readInto(wLambertian, "wLambertian");
-  config.readInto(wrappingSurfinish, "wrappingSurfinish");
+
   config.readInto(cReffile, "cReffile");
   config.readInto(crystal_reflectivity, "cReflectivity");
   config.readInto(cSurrefind, "cSurrefind");
