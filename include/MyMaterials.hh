@@ -16,7 +16,7 @@ private:
 public:
   MyMaterials();
   ~MyMaterials();
-  
+//  static const G4double kInfinity = 9.0E99; 
   static G4Material* Vacuum();
   static G4Material* Air();
   static G4Material* Water();
@@ -25,6 +25,7 @@ public:
   static G4Material* Iron();
   static G4Material* Lead();
   static G4Material* Brass();
+  static G4Material* copper();
   static G4Material* Tungsten();
   static G4Material* CopperTungstenAlloy(const G4double& WFrac);
   static G4Material* Quartz();
@@ -37,7 +38,8 @@ public:
   static G4Material* MeltMount168();
   static G4Material* LSO();
   static G4Material* LYSO();
-
+  static G4Material* EJ200();
+  static G4Material* Acrylic();
   static G4Material* PWO();
   static G4Material* SiO2_Ce();
 

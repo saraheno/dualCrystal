@@ -690,6 +690,15 @@ G4Material* MyMaterials::Brass()
 }
 
 
+G4Material* MyMaterials::copper()
+{
+
+  G4double a, z;
+  G4double density;
+  G4Material* Cu = new G4Material("Copper", z=29., a= 63.55*g/mole, density= 8.92*g/cm3);
+  
+  return Cu;
+}
 
 G4Material* MyMaterials::Aluminium()
 {
@@ -1327,6 +1336,173 @@ G4Material* MyMaterials::LSO()
   return mat;
 }
 
+
+G4Material* MyMaterials::EJ200()
+{
+  G4Element* H  = new G4Element("Hydrogen", "H", 1., 1.01*g/mole);
+  G4Element* C  = new G4Element("Carbon",   "C", 6., 12.01*g/mole);
+  G4Material* material = new G4Material( "EJ200", 1.023*g/cm3, 2, kStateSolid );
+  material->AddElement( C, 91.53*perCent );
+  material->AddElement( H,  8.47*perCent );
+  return material;
+
+/*
+  static double photonE[flatentries]    = {minenergy, maxenergy};
+  static double refrac_idx[flatentries] = { 1.58, 1.58 };
+
+  G4MaterialPropertiesTable* table = new G4MaterialPropertiesTable();
+  table->AddProperty( "RINDEX", photonE, refrac_idx, flatentries );
+  table->AddConstProperty( "SCINTILLATIONYIELD",        10./keV );
+  table->AddConstProperty( "RESOLUTIONSCALE",           1.0 );
+  table->AddConstProperty( "FASTSCINTILLATIONRISETIME", 0.9*ns );
+  material->SetMaterialPropertiesTable( table );
+  material->GetIonisation()->SetBirksConstant( 0.126*mm/MeV );
+
+  static const unsigned nentries = 57;
+  static double photonE[nentries] = {
+    3.542405514*eV, 3.492512479*eV, 3.444005361*eV, 3.396827205*eV,
+    3.350924135*eV, 3.306245147*eV, 3.262741921*eV, 3.220368649*eV,
+    3.179081872*eV, 3.170951228*eV, 3.162862066*eV, 3.154814071*eV,
+    3.146806929*eV, 3.138840329*eV, 3.130913965*eV, 3.123027531*eV,
+    3.115180729*eV, 3.107373258*eV, 3.099604825*eV, 3.091875137*eV,
+    3.084183905*eV, 3.076530844*eV, 3.068915668*eV, 3.061338099*eV,
+    3.053797857*eV, 3.046294668*eV, 3.038828260*eV, 3.031398362*eV,
+    3.024004707*eV, 2.987570916*eV, 2.952004595*eV, 2.917275129*eV,
+    2.883353326*eV, 2.850211333*eV, 2.817822568*eV, 2.786161640*eV,
+    2.755204289*eV, 2.724927319*eV, 2.695308543*eV, 2.666326731*eV,
+    2.637961553*eV, 2.610193537*eV, 2.583004021*eV, 2.556375113*eV,
+    2.530289653*eV, 2.504731172*eV, 2.479683860*eV, 2.455132535*eV,
+    2.431062608*eV, 2.407460058*eV, 2.384311404*eV, 2.361603676*eV,
+    2.339324396*eV, 2.317461551*eV, 2.296003574*eV, 2.274939321*eV,
+    2.254258055*eV
+};
+
+  static double Normabs_length[nentries] =
+  {
+    17.42923195*mm, 17.50261763*mm, 17.52080780*mm, 17.54004961*mm,
+    17.56848311*mm, 17.66153201*mm, 17.69242388*mm, 18.13437416*mm,
+    22.14857794*mm, 23.91636107*mm, 26.19927553*mm, 29.08895000*mm,
+    32.75048588*mm, 37.28149870*mm, 43.07842006*mm, 50.39849206*mm,
+    59.85105799*mm, 71.98244983*mm, 87.89754636*mm, 108.7633087*mm,
+    136.5727481*mm, 173.1953472*mm, 222.5973304*mm, 287.5620553*mm,
+    375.9938324*mm, 489.0761462*mm, 637.3307552*mm, 815.2529798*mm,
+    1039.856920*mm, 2315.937016*mm, 3211.846828*mm, 3800.000000*mm,
+    4162.309734*mm, 4429.365072*mm, 4633.055771*mm, 4944.696400*mm,
+    5176.400316*mm, 5396.503919*mm, 5716.638906*mm, 6168.317205*mm,
+    6280.014490*mm, 6360.307136*mm, 6639.580861*mm, 6926.562350*mm,
+    7323.864938*mm, 7652.045236*mm, 8104.081942*mm, 8525.979809*mm,
+    8898.295533*mm, 9225.296344*mm, 9847.707211*mm, 10310.48782*mm,
+    10862.63280*mm, 11237.54509*mm, 11929.82503*mm, 12944.01067*mm,
+    13183.00043*mm
+
+  };
+
+  double abs_length[nentries];
+
+  for( unsigned i = 0; i < nentries; ++i ){
+    abs_length[i] = Normabs_length[i];
+  }
+//  G4MaterialPropertiesTable* table = material->GetMaterialPropertiesTable();
+  table->RemoveProperty( "ABSLENGTH" );
+  table->AddProperty( "ABSLENGTH", photonE, abs_length, nentries );
+*/
+}
+
+
+G4Material* MyMaterials::Acrylic(){
+
+
+  G4double a, z, density;
+  G4String name, symbol;
+  G4int nel;
+  const G4double kInfinity = 9.0E99;
+  const G4double lambda_min = 200*nm ; 
+  const G4double lambda_max = 700*nm ; 
+  a = 1.01*g/mole;
+  G4Element* elH  = new G4Element(name="Hydrogen", symbol="H", z=1., a);
+  a = 12.01*g/mole;
+  G4Element* elC  = new G4Element(name="Carbon",   symbol="C", z=6., a);
+  a = 16.00*g/mole;
+  G4Element* elO  = new G4Element(name="Oxygen",   symbol="O", z=8., a);
+
+  density = 1.19*g/cm3;
+  G4Material* Acrylic = new G4Material(name="Acrylic", density, nel=3);
+  Acrylic->AddElement(elC, 5);
+  Acrylic->AddElement(elH, 8);
+  Acrylic->AddElement(elO, 2);
+
+
+  
+     const G4int NENTRIES = 11 ;
+     G4double LAMBDA_ACRYLIC[NENTRIES] ;
+   
+   
+     G4double RINDEX_ACRYLIC[NENTRIES] ;
+     G4double ENERGY_ACRYLIC[NENTRIES] ;
+
+   
+     G4double bParam[4] = {1760.7010,-1.3687,2.4388e-3,-1.5178e-6} ; 
+     
+     for(G4int i=0;i<NENTRIES; i++){
+    
+       LAMBDA_ACRYLIC[i] = lambda_min + i*(lambda_max-lambda_min)/float(NENTRIES-1) ;
+       RINDEX_ACRYLIC[i] = 0.0 ;
+   
+       for (G4int jj=0 ; jj<4 ; jj++)
+       {
+         RINDEX_ACRYLIC[i] +=  (bParam[jj]/1000.0)*std::pow(LAMBDA_ACRYLIC[i]/nm,jj) ; 
+       }
+   
+       ENERGY_ACRYLIC[i] =   h_Planck*c_light/LAMBDA_ACRYLIC[i] ;  // Convert from wavelength to energy ;
+   //  G4cout << ENERGY_ACRYLIC[i]/eV << " " << LAMBDA_ACRYLIC[i]/nm << " " << RINDEX_ACRYLIC[i] << G4endl ;
+
+     }
+   
+     G4MaterialPropertiesTable *MPT_Acrylic = new G4MaterialPropertiesTable();
+     MPT_Acrylic->AddProperty("RINDEX", ENERGY_ACRYLIC, RINDEX_ACRYLIC, NENTRIES);
+
+     const G4int NENT = 25 ;
+     G4double LAMBDAABS[NENT] = 
+     {
+       100.0,
+       246.528671, 260.605103, 263.853516, 266.019104, 268.726105,    
+       271.433136, 273.598724, 276.305725, 279.554138, 300.127380,    
+       320.159241, 340.191101, 360.764343, 381.337585, 399.745239,    
+       421.401276, 440.891724, 460.382172, 480.414001, 500.987274,    
+       520.477722, 540.509583, 559.458618,
+       700.0    
+     } ;
+   
+     G4double ABS[NENT] =   // Transmission (in %) of  3mm thick PMMA 
+     { 
+       0.0000000,
+       0.0000000,  5.295952,  9.657321, 19.937695, 29.283491, 
+       39.252335, 48.598133, 58.255451, 65.109039, 79.439247,
+       85.669785, 89.719627, 91.277260, 91.588783, 91.900307,
+       91.588783, 91.277260, 91.277260, 91.588783, 91.588783,
+       91.900307, 91.900307, 91.588783,
+       91.5
+     } ;
+
+     MPT_Acrylic->AddProperty("ABSLENGTH", new G4MaterialPropertyVector()) ;
+     for(G4int i=0;i<NENT; i++){
+       G4double energy    = h_Planck*c_light/(LAMBDAABS[i]*nm) ;
+       G4double abslength ;
+   
+       if (ABS[i] <= 0.0) {
+         abslength = 1.0/kInfinity ;
+       }
+       else {
+         abslength = -3.0*mm/(std::log(ABS[i]/100.0)) ;
+       }
+   
+       MPT_Acrylic->AddEntry("ABSLENGTH", energy, abslength);
+   
+     }
+   
+     Acrylic->SetMaterialPropertiesTable(MPT_Acrylic);
+return Acrylic;
+}
 
 
 G4Material* MyMaterials::PWO()
