@@ -30,7 +30,8 @@ G4Material* MyMaterials::Air()
   //fixed index of refraction
   const G4int nEntries_RI = 8;
   G4double PhotonEnergy_RI[nEntries_RI] =  { 0.1*eV, 1.0*eV, 2.26*eV, 2.55*eV, 2.84*eV, 3.06*eV, 3.4*eV, 4.1*eV};
-  G4double RefractiveIndex[nEntries_RI] =  { 1.0003,   1.0003,   1.0003,    1.0003,    1.0003,    1.0003,   1.0003,   1.0003};
+  //  G4double RefractiveIndex[nEntries_RI] =  { 1.0003,   1.0003,   1.0003,    1.0003,    1.0003,    1.0003,   1.0003,   1.0003};
+  G4double RefractiveIndex[nEntries_RI] =  { 1.000,   1.000,   1.000,    1.000,    1.000,    1.000,   1.000,   1.000};
   
   G4MaterialPropertiesTable* myMPT = new G4MaterialPropertiesTable();
   myMPT->AddProperty("RINDEX",PhotonEnergy_RI,RefractiveIndex,nEntries_RI);

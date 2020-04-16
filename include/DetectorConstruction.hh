@@ -137,15 +137,8 @@ private:
   //surfaces
   int surConfig;
 
-  TString wReffile;
-  G4double wReflectivity;
-  G4double wSurrefind;
-  int wSurtype;
-  G4double wSpecularspike;
-  G4double wSpecularlobe;
-  G4double wSigmaalpha;
-  G4double wLambertian;
-  G4double wBackscatter;
+
+
   int crystalSurfinish;
   TString cReffile;
   G4double cReflectivity;

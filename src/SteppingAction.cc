@@ -157,6 +157,21 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
       else if(thePrePVName.contains("ecalDet"))
 	{
 	  //	  std::cout<<"hit ecal photo detector"<<std::endl;
+	  theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
+	}
+      else if(thePrePVName.contains("ecalGap"))
+	{
+	  //	  std::cout<<"hit ecal photo detector"<<std::endl;
+	  theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
+	}
+      else if(thePrePVName.contains("world"))
+	{
+	  //	  std::cout<<"hit ecal photo detector"<<std::endl;
+	  theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
+	}
+      else 
+	{
+	  std::cout<<"weird PrePVName "<<thePrePVName<<std::endl;
 	}
 
 

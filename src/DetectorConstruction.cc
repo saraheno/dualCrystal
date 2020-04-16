@@ -113,16 +113,6 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
   config.readInto(ecal_n_cell,"ecal_n_cell");
 
 
-  config.readInto(surConfig, "surConfig");
-  config.readInto(wReffile, "wReffile");
-  config.readInto(wReflectivity, "wReflectivity");
-  config.readInto(wSurrefind, "wSurrefind");
-  config.readInto(wSurtype, "wSurtype");
-  config.readInto(wSpecularspike, "wSpecularspike");
-  config.readInto(wSpecularlobe, "wSpecularlobe");
-  config.readInto(wSigmaalpha, "wSigmaalpha");
-  config.readInto(wLambertian, "wLambertian");
-
   config.readInto(cReffile, "cReffile");
   config.readInto(crystal_reflectivity, "cReflectivity");
   config.readInto(cSurrefind, "cSurrefind");
@@ -478,29 +468,25 @@ void DetectorConstruction::SetMaxStep(G4double maxStep)
 
 // Initialization classes
 //
-
 void DetectorConstruction::initializeSurface(G4OpticalSurface *mySurface, string surfaceType)
 {
-    if(surfaceType == "crystal") 
-    {
+    if(surfaceType == "crystal") {
 //         cout << "CRISTALLO " << crystalSurfinish << endl;
-
-        surfinish   	= crystalSurfinish;
-        RefFile     	= cReffile;
+        surfinish   = crystalSurfinish;
+        RefFile     = cReffile;
         reflectivity    = cReflectivity;
-        surrefind   	= cSurrefind;
-        surtype     	= cSurtype;
+        surrefind   = cSurrefind;
+        surtype     = cSurtype;
         specularspike   = cSpecularspike;
         specularlobe    = cSpecularlobe;
-        sigmaalpha  	= cSigmaalpha;
+        sigmaalpha  = cSigmaalpha;
         backscatter     = cBackscatter;
-        lambertian  	= cLambertian;
+        lambertian  = cLambertian;
     }
 
 
 
-    if(this->surfinish <= 5)
-    {
+    if(this->surfinish <= 5) {
         G4cout << "Using unified model." << G4endl;
         mySurface -> SetModel(unified);
         switch(this->surtype) {
@@ -513,10 +499,7 @@ void DetectorConstruction::initializeSurface(G4OpticalSurface *mySurface, string
             G4cout << "Surface type: dielectric_dielectric" << G4endl;
             break;
         }
-    }
-
-    else if(this->surfinish > 5 && surfaceType == "wrapping") G4cout << "Value not allowed" << G4endl;
-
+    } else if(this->surfinish > 5 && surfaceType == "wrapping") G4cout << "Value not allowed" << G4endl;
     else {
         G4cout << "Using LUT for surface treatment." << G4endl;
         mySurface -> SetModel(LUT);
@@ -578,25 +561,47 @@ void DetectorConstruction::initializeSurface(G4OpticalSurface *mySurface, string
 //
 // reflectivity
 //
-
 void DetectorConstruction::initializeReflectivitySurface(G4OpticalSurface *surface, string surfaceType)
 {
 
     int NumRefl = 0;
     G4double EphotonRefl[1000];
     G4double Refl[1000];
-    
-    EphotonRefl[0] = 0.0001 * eV;
-    EphotonRefl[1] = 1.0 * eV;
-    EphotonRefl[2] = 4.08 * eV;
-    Refl[0] = 0.0; // suppress photons with energy < 1eV (will not be detected)
-    Refl[1] = this->crystal_reflectivity;
-    Refl[2] = this->crystal_reflectivity;
-    NumRefl = 100;
+    if(this->RefFile != "none") {
+        ifstream myReadFile;
+        myReadFile.open(this->RefFile);
 
+        G4cout << "Reflectivities read from file:" << G4endl;
+        if(myReadFile.is_open()) {
+            while(!myReadFile.eof()) {
+                myReadFile >> EphotonRefl[NumRefl];
+                if(EphotonRefl[NumRefl] == -1) break;
+                myReadFile >> Refl[NumRefl];
+                // convert to energy (1eV corresponds to 1239.8 nm: energy [eV]= 1239.8nmeV/lambda[nm])
+                EphotonRefl[NumRefl] = 1239.8 / EphotonRefl[NumRefl] * eV;
+                NumRefl++;
+            }
+        } else {
+            G4cerr << "<DetectorConstruction> : Could not read file with reflectivities!" << G4endl;
+            exit(0);
+        }
+        myReadFile.close();
+    } else {
+        EphotonRefl[0] = 0.0001 * eV;
+        EphotonRefl[1] = 1.0 * eV;
+        EphotonRefl[2] = 4.08 * eV;
+        Refl[0] = 0.0; // suppress photons with energy < 1eV (will not be detected)
+        Refl[1] = this->crystal_reflectivity;
+        Refl[2] = this->crystal_reflectivity;
+        NumRefl = 3;
+
+
+    }
     G4cout << "Reflectivities as a function of the photon energy:" << G4endl;
-    for(int i = 0; i < NumRefl; i++)         G4cout << i << "   " << EphotonRefl[i] << "   " << Refl[i] << G4endl;
-    
+    for(int i = 0; i < NumRefl; i++) {
+        G4cout << i << "   " << EphotonRefl[i] << "   " << Refl[i] << G4endl;
+    }
+
 
     Ephoton[0] = 0.0001 * eV;
     Ephoton[1] = 1.0 * eV;
@@ -632,15 +637,46 @@ void DetectorConstruction::initializeReflectivitySurface(G4OpticalSurface *surfa
         myST->AddProperty("LAMBERTIAN",            Ephoton, Lambertian,      3);
     }
 
-//     setWrappingIndices(myST,1.82,"teflon");
+
+    myST->AddProperty("REFLECTIVITY", EphotonRefl, Refl, NumRefl);
+    //try with real and complex index... remove line above and use ones below.
+    G4double tyvek_rwavelength[1000] = { 1.24984 * eV, 1.3051 * eV, 1.3776 * eV, 1.45864 * eV, 1.5498 * eV, 1.65312 * eV, 1.7712 * eV, 1.90745 * eV, 2.0664 * eV,
+                                         2.25426 * eV, 2.47968 * eV, 2.7552 * eV, 3.0996 * eV, 3.17908 * eV, 3.26274 * eV, 3.35092 * eV, 3.44401 * eV, 3.54241 * eV, 4.13281 * eV
+                                       };
+    G4double tyvek_rindex[1000] = { 1.37, 1.49, 2.06, 2.61, 2.7, 2.4, 1.8, 1.32, 1.13, 0.907, 0.72, 0.578, 0.456, 0.433, 0.41, 0.382, 0.38, 0.4, 0.276};
+
+
+    G4double tyvek_cwavelength[1000] = {1.24997 * eV, 1.3051 * eV, 1.34037 * eV, 1.3776 * eV, 1.41696 * eV, 1.45864 * eV, 1.50284 * eV, 1.6 * eV, 1.65312 * eV,
+                                        1.74995 * eV, 1.8 * eV, 1.89985 * eV, 1.95005 * eV, 2.05 * eV, 2.1 * eV, 2.19986 * eV, 2.25426 * eV, 2.34997 * eV, 2.4498 * eV,
+                                        2.50019 * eV, 2.7 * eV, 2.8 * eV, 2.99986 * eV, 3.19959 * eV, 3.39962 * eV, 3.54241 * eV, 3.69992 * eV, 3.9001 * eV, 4.13281 * eV
+                                       };
+    G4double tyvek_cindex[1000] = { 9.49, 8.88, 8.49, 8.3, 8.18, 8.22, 8.31, 8.6, 8.62,
+                                    8.39, 8.21, 7.82, 7.65, 7.31, 7.15, 6.85, 6.69, 6.42, 6.15,
+                                    6.03, 5.58, 5.38, 5.02, 4.71, 4.43, 4.24, 4.06, 3.84, 3.61
+                                  };
+
+
+
+
+
+
+    //-----------------------------------------------------------------------------------//
+    myST->AddProperty("REALRINDEX", tyvek_rwavelength, tyvek_rindex, 19);
+    myST->AddProperty("IMAGINARYRINDEX", tyvek_cwavelength, tyvek_cindex, 29);
+
+
+    G4double air_rwavelength[1000] = {0.1 * eV, 1 * eV, 2 * eV, 3 * eV, 4 * eV};
+    G4double air_rindex[1000] = {1, 1, 1, 1, 1};
+
+    G4double air_cwavelength[1000] = {0.1 * eV, 1 * eV, 2 * eV, 3 * eV, 4 * eV};
+    G4double air_cindex[1000] = {1, 1, 1, 1, 1};
+//     myST->AddProperty("REALRINDEX", air_rwavelength, air_rindex, 5);
+//     myST->AddProperty("IMAGINARYRINDEX", air_cwavelength, air_cindex, 5);
+
+
 
     surface->SetMaterialPropertiesTable(myST);
     if(this->sigmaalpha >= 0) surface->SetSigmaAlpha(this->sigmaalpha);
 
 
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-//---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- 
-
