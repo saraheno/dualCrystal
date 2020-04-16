@@ -140,8 +140,8 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
 
 void CC_Analyzer(bool debug) {
   if(debug) {  
-    std::cout<<"running on temp.root"<<std::endl;
-    CC_Ana("temp.root","temp_hists.root");
+    std::cout<<"running on haha.root"<<std::endl;
+    CC_Ana("haha.root","haha_hists.root");
   }
   else {
     std::cout<<"running on normal files"<<std::endl;
