@@ -45,6 +45,7 @@
 #include "G4Material.hh"
 #include "G4VUserDetectorConstruction.hh"
 #include "G4LogicalBorderSurface.hh"
+#include "G4OpBoundaryProcess.hh"
 #include "G4LogicalSkinSurface.hh"
 #include "G4OpticalSurface.hh"
 #include "G4Box.hh"
@@ -76,6 +77,8 @@ public:
   void initializeMaterials();
   void ConstructField();
   void SetMaxStep(G4double);
+  void initializeSurface(G4OpticalSurface *,string);
+  void initializeReflectivitySurface(G4OpticalSurface *, string);
   
   Fiber* GetFiber() { return &fib; };
   
@@ -111,7 +114,7 @@ private:
   G4double ecal_rear_length;
   G4double ecal_front_face;
   G4double ecal_rear_face;
-  G4double ecal_timing_distance;
+
   G4double ecal_det_size;
   G4int ecal_n_cell;
 
@@ -128,6 +131,45 @@ private:
   G4Material* CoMaterial;
   G4Material* GaMaterial;
   G4Material* DeMaterial;
+
+
+
+  //surfaces
+  int surConfig;
+
+  TString wReffile;
+  G4double wReflectivity;
+  G4double wSurrefind;
+  int wSurtype;
+  G4double wSpecularspike;
+  G4double wSpecularlobe;
+  G4double wSigmaalpha;
+  G4double wLambertian;
+  G4double wBackscatter;
+  int wrappingSurfinish;
+  TString cReffile;
+  G4double cReflectivity;
+  G4double cSurrefind;
+  int cSurtype;
+  G4double cSpecularspike;
+  G4double cSpecularlobe;
+  G4double cSigmaalpha;
+  G4double cLambertian;
+  G4double cBackscatter;
+  int crystalSurfinish;
+  TString RefFile;
+  G4double reflectivity;
+  G4double surrefind;
+  int surtype;
+  G4double specularspike;
+  G4double specularlobe;
+  G4double sigmaalpha;
+  G4double lambertian;
+  G4double backscatter;
+  G4double crystal_reflectivity;
+  int surfinish;
+  G4double Ephoton[3];
+
   
   G4UserLimits* stepLimit;             // pointer to user step limits
 

@@ -150,10 +150,14 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
         CreateTree::Instance()->h_phot_cer_lambda_ECAL_f -> Fill( photWL);
       }
       else if (thePrePVName.contains("ecalCrystalP_r"))
-      {      
+	{      
 	CreateTree::Instance()->tot_phot_cer_ECAL_r += 1;
         CreateTree::Instance()->h_phot_cer_lambda_ECAL_r -> Fill( photWL );
-      }
+	}
+      else if(thePrePVName.contains("ecalDet"))
+	{
+	  //	  std::cout<<"hit ecal photo detector"<<std::endl;
+	}
 
 
       if( !propagateCerenkov ) theTrack->SetTrackStatus(fKillTrackAndSecondaries);      

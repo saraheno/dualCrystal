@@ -43,6 +43,9 @@
 #include "G4EqMagElectricField.hh"
 #include "G4PropagatorInField.hh"
 #include "G4Material.hh"
+#include "G4LogicalBorderSurface.hh"
+#include "G4LogicalSkinSurface.hh"
+
 #include "G4Box.hh"
 #include "G4Trd.hh"
 #include "G4Tubs.hh"
@@ -88,7 +91,7 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
   config.readInto(bar_length,  	"bar_length");
   
 
-  
+  // gap between crystal and photodetector
   config.readInto(gap_l,         		"gap_l");
   config.readInto(gap_size_x,    	"gap_size_x");
   config.readInto(gap_size_y,    	"gap_size_y");
@@ -106,8 +109,33 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
   config.readInto(ecal_rear_length, "ecal_rear_length");
   config.readInto(ecal_front_face,	"ecal_front_face");
   config.readInto(ecal_rear_face,	"ecal_rear_face");
-  config.readInto(ecal_timing_distance,	"ecal_timing_distance");
+
   config.readInto(ecal_n_cell,"ecal_n_cell");
+
+
+  config.readInto(surConfig, "surConfig");
+  config.readInto(wReffile, "wReffile");
+  config.readInto(wReflectivity, "wReflectivity");
+  config.readInto(wSurrefind, "wSurrefind");
+  config.readInto(wSurtype, "wSurtype");
+  config.readInto(wSpecularspike, "wSpecularspike");
+  config.readInto(wSpecularlobe, "wSpecularlobe");
+  config.readInto(wSigmaalpha, "wSigmaalpha");
+  config.readInto(wLambertian, "wLambertian");
+  config.readInto(wrappingSurfinish, "wrappingSurfinish");
+  config.readInto(cReffile, "cReffile");
+  config.readInto(crystal_reflectivity, "cReflectivity");
+  config.readInto(cSurrefind, "cSurrefind");
+  config.readInto(cSurtype, "cSurtype");
+  config.readInto(cSpecularspike, "cSpecularspike");
+  config.readInto(cSpecularlobe, "cSpecularlobe");
+  config.readInto(cSigmaalpha, "cSigmaalpha");
+  config.readInto(cSpecularspike, "cSpecularspike");
+  config.readInto(cSpecularlobe, "cSpecularlobe");
+  config.readInto(cSigmaalpha, "cSigmaalpha");
+  config.readInto(cBackscatter, "cBackscatter");
+  config.readInto(cLambertian, "cLambertian");
+  config.readInto(crystalSurfinish, "crystalSurfinish");
 
 
   
@@ -156,6 +184,18 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   //------------------------------------
   //------------- Geometry -------------
   //------------------------------------
+
+
+  //
+  //   S U R F A C E S   I N I T I A L I Z A T I O N
+  //
+
+  G4LogicalBorderSurface *CrystalSurfaceTop   = NULL;
+  G4LogicalBorderSurface *TopWrappingSurface      = NULL;
+
+  G4OpticalSurface *OpWrappingSurface         = NULL;
+  G4OpticalSurface *OpCrystalSurface      = NULL;
+
   
   
   // The experimental Hall
@@ -214,6 +254,19 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   G4double y_pos[NECAL_CRYST];
   int nArrayECAL = (int) sqrt(NECAL_CRYST);
 
+
+  if(surConfig == 0) {
+    //Nothing - Crystal completely polished
+    
+  } else if(surConfig == 1) {
+    cout << "Configuring a naked crystal, with only a tiny wrapping" << endl;
+    /*-------CRYSTAL SURFACE-------*/
+    OpCrystalSurface = new G4OpticalSurface("crystal");
+    initializeSurface(OpCrystalSurface, "crystal");
+    initializeReflectivitySurface(OpCrystalSurface, "crystal");
+  }
+
+
   int iCrystal;
   double off;
   for (int iX = 0; iX < nArrayECAL; iX ++)
@@ -237,22 +290,27 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
       cout << " x_pos [" <<setw(3)<<iCrystal << "] = " <<setw(8)<< x_pos[iCrystal] << " :: y_pos[" <<setw(3)<< iCrystal << "] = " <<setw(8)<<y_pos[iCrystal] <<" "<<iX<<" "<<iY<<" "<<off<< endl;
       
       sprintf(name, "ecalCrystalP_f_%d", iCrystal);
-      ecalCrystalP_f[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_timing_distance+ecal_front_length*0.5), ecalCrystalL_f, name, worldLV, false, 0);
+      ecalCrystalP_f[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_front_length*0.5), ecalCrystalL_f, name, worldLV, false, 0);
+
+
+    CrystalSurfaceTop   = new G4LogicalBorderSurface("CrystalSurfaceTop", ecalCrystalP_f[iCrystal], worldPV, OpCrystalSurface);  
+
+
 
       sprintf(name, "ecalCrystalP_r_%d", iCrystal);
-      ecalCrystalP_r[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_timing_distance + ecal_front_length + ecal_rear_length*0.5), ecalCrystalL_r, name, worldLV, false, 0);
+      ecalCrystalP_r[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_front_length + 2*gap_l+2*det_l+ecal_rear_length*0.5), ecalCrystalL_r, name, worldLV, false, 0);
 
       sprintf(name, "ecalGapP_f_%d", iCrystal);
-      ecalGapP_f[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_timing_distance - gap_l*0.5), ecalGapL, name, worldLV, false, 0);
+      ecalGapP_f[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], -1.* gap_l*0.5), ecalGapL, name, worldLV, false, 0);
 
       sprintf(name, "ecalGapP_r_%d", iCrystal);
-      ecalGapP_r[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_timing_distance + ecal_front_length + ecal_rear_length + gap_l*0.5), ecalGapL, name, worldLV, false, 0);
+      ecalGapP_r[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_front_length +  + 2*gap_l+2*det_l+ecal_rear_length + gap_l*0.5), ecalGapL, name, worldLV, false, 0);
 
       sprintf(name, "ecalDetP_f_%d", iCrystal);
-      ecalDetP_f[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_timing_distance  - gap_l - det_l*0.5), ecalDetL, name, worldLV, false, 0);
+      ecalDetP_f[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], -1.* gap_l - det_l*0.5), ecalDetL, name, worldLV, false, 0);
 
       sprintf(name, "ecalDetP_r_%d", iCrystal);
-      ecalDetP_r[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_timing_distance + ecal_front_length + ecal_rear_length + gap_l + det_l*0.5), ecalDetL, name, worldLV, false, 0);
+      ecalDetP_r[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_front_length + ecal_rear_length +  + 2*gap_l+2*det_l+gap_l + det_l*0.5), ecalDetL, name, worldLV, false, 0);
 
     }
   }
@@ -420,7 +478,7 @@ void DetectorConstruction::SetMaxStep(G4double maxStep)
 
 // Initialization classes
 //
-/*
+
 void DetectorConstruction::initializeSurface(G4OpticalSurface *mySurface, string surfaceType)
 {
     if(surfaceType == "crystal") 
@@ -514,13 +572,13 @@ void DetectorConstruction::initializeSurface(G4OpticalSurface *mySurface, string
         G4cout << "Surface finish unkown!" << G4endl;
         exit(0);
     }
-}*/
+}
 
 
 //
 // reflectivity
 //
-/*
+
 void DetectorConstruction::initializeReflectivitySurface(G4OpticalSurface *surface, string surfaceType)
 {
 
@@ -580,7 +638,7 @@ void DetectorConstruction::initializeReflectivitySurface(G4OpticalSurface *surfa
     if(this->sigmaalpha >= 0) surface->SetSigmaAlpha(this->sigmaalpha);
 
 
-}*/
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
