@@ -13,10 +13,9 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
   TH1F *hestE = new TH1F("hestE","energy estimated /true",600,0.,1.1);
   TH2F *hEcalEcalem = new TH2F("hEcalEcalem","ecal versus ecal em /true",600,0.,1.1,600,0.,1.1);
   TH2F *hEcalfEcalem = new TH2F("hEcalfEcalem","em frac versus ecal/true ",600,0.,1.1,600,0.,1.1);
-  TH1F *hcerTimingf= new TH1F("hcerTimingf","number cerenkov photons timing front",1000,0.,1000.);
-  TH1F *hcerTimingr= new TH1F("hcerTimingr","number cerenkov photons timing read",1000,0.,1000.);
+
   TH1F *hcerECALf= new TH1F("hcerECALf","number cerenkov photons ECAL front",1000,0.,1000.);
-  TH1F *hcerECALr= new TH1F("hcerECALr","number cerenkov photons ECAL read",1000,0.,1000.);
+
 
   TFile *f = new TFile(inputfilename);
   TTree *t1 = (TTree*)f->Get("tree");
@@ -26,24 +25,24 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
   float depositedEnergyEscapeWorld;
 
   float depositedEnergyTotal,depositedEnergyWorld;
-  float depositedEnergyECAL_f,depositedEnergyECAL_r;
+  float depositedEnergyECAL_f;
   float depositedEnergyEcalGap;
   float depositedEnergyEcalDet;
 
 
   float depositedElecEnergyTotal,depositedElecEnergyWorld;
-  float depositedElecEnergyECAL_f,depositedElecEnergyECAL_r;
+  float depositedElecEnergyECAL_f;
   float depositedElecEnergyEcalGap;
   float depositedElecEnergyEcalDet;
 
 
 
   float depositedIonEnergyTotal,depositedIonEnergyWorld;
-  float depositedIonEnergyECAL_f,depositedIonEnergyECAL_r;
+  float depositedIonEnergyECAL_f;
   float depositedIonEnergyEcalGap;
   float depositedIonEnergyEcalDet;
 
-  int tot_phot_cer_ECAL_f,tot_phot_cer_ECAL_r;
+  int tot_phot_cer_ECAL_f;
 
   t1->SetBranchAddress("inputMomentum",&inputMomentum);
 
@@ -52,7 +51,7 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
   t1->SetBranchAddress("depositedEnergyTotal",&depositedEnergyTotal);
   t1->SetBranchAddress("depositedEnergyWorld",&depositedEnergyWorld);
   t1->SetBranchAddress("depositedEnergyECAL_f",&depositedEnergyECAL_f);
-  t1->SetBranchAddress("depositedEnergyECAL_r",&depositedEnergyECAL_r);
+
   t1->SetBranchAddress("depositedEnergyEcalGap",&depositedEnergyEcalGap);
   t1->SetBranchAddress("depositedEnergyEcalDet",&depositedEnergyEcalDet);
 
@@ -60,7 +59,7 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
   t1->SetBranchAddress("depositedElecEnergyTotal",&depositedElecEnergyTotal);
   t1->SetBranchAddress("depositedElecEnergyWorld",&depositedElecEnergyWorld);
   t1->SetBranchAddress("depositedElecEnergyECAL_f",&depositedElecEnergyECAL_f);
-  t1->SetBranchAddress("depositedElecEnergyECAL_r",&depositedElecEnergyECAL_r);
+
   t1->SetBranchAddress("depositedElecEnergyEcalGap",&depositedElecEnergyEcalGap);
   t1->SetBranchAddress("depositedElecEnergyEcalDet",&depositedElecEnergyEcalDet);
 
@@ -69,14 +68,14 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
   t1->SetBranchAddress("depositedIonEnergyTotal",&depositedIonEnergyTotal);
   t1->SetBranchAddress("depositedIonEnergyWorld",&depositedIonEnergyWorld);
   t1->SetBranchAddress("depositedIonEnergyECAL_f",&depositedIonEnergyECAL_f);
-  t1->SetBranchAddress("depositedIonEnergyECAL_r",&depositedIonEnergyECAL_r);
+
   t1->SetBranchAddress("depositedIonEnergyEcalGap",&depositedIonEnergyEcalGap);
   t1->SetBranchAddress("depositedIonEnergyEcalDet",&depositedIonEnergyEcalDet);
 
 
 
   t1->SetBranchAddress("tot_phot_cer_ECAL_f",&tot_phot_cer_ECAL_f);
-  t1->SetBranchAddress("tot_phot_cer_ECAL_r",&tot_phot_cer_ECAL_r);
+
 
 
   Int_t nentries = (Int_t)t1->GetEntries();
@@ -92,32 +91,32 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
     std::cout<<"total energy deposited is "<<depositedEnergyTotal<<std::endl;
     std::cout<<"world energy deposited is "<<depositedEnergyWorld<<std::endl;
     std::cout<<"ECAL front energy deposited is "<<depositedEnergyECAL_f<<std::endl;
-    std::cout<<"ECAL rear energy deposited is "<<depositedEnergyECAL_r<<std::endl;
+
     std::cout<<"escape energy deposited is "<<depositedEnergyEscapeWorld<<std::endl;
     std::cout<<"Ecal gap energy deposited is "<<depositedEnergyEcalGap<<std::endl;
     std::cout<<"Ecal det energy deposited is "<<depositedEnergyEcalDet<<std::endl;
     */
-    float eee=depositedEnergyECAL_f+depositedEnergyECAL_r+depositedEnergyWorld+depositedEnergyEcalGap+depositedEnergyEcalDet;
+    float eee=depositedEnergyECAL_f+depositedEnergyWorld+depositedEnergyEcalGap+depositedEnergyEcalDet;
     float fff=depositedEnergyTotal+depositedEnergyEscapeWorld;
-    float ecaltotal=depositedEnergyECAL_f+depositedEnergyECAL_r;
+    float ecaltotal=depositedEnergyECAL_f;
     //std::cout<<" sum in detectors is "<<eee<<std::endl;
     //std::cout<<" deposited plus escaped is "<<fff<<std::endl;
 
     float estE= 
-      (depositedEnergyECAL_f-depositedIonEnergyECAL_f)+
-      (depositedEnergyECAL_r-depositedIonEnergyECAL_r);
+      (depositedEnergyECAL_f-depositedIonEnergyECAL_f);
+
     std::cout<<"est E is "<<estE<<std::endl;
 
 
     hTotalE->Fill(depositedEnergyTotal/trueE);
     hestE->Fill(estE/trueE);
-    float yyy=depositedEnergyECAL_f+depositedEnergyECAL_r;
-    float yy2=depositedElecEnergyECAL_f+depositedElecEnergyECAL_r;
+    float yyy=depositedEnergyECAL_f;
+    float yy2=depositedElecEnergyECAL_f;
     hEcalEcalem->Fill(yyy/trueE,yy2/trueE);
     if(yyy>0) hEcalfEcalem->Fill(yyy/trueE,yy2/yyy);
 
     hcerECALf->Fill(tot_phot_cer_ECAL_f);
-    hcerECALr->Fill(tot_phot_cer_ECAL_r);
+
 
 
 		    
@@ -131,7 +130,7 @@ void CC_Ana(const char* inputfilename,const char* outputfilename) {
   hEcalEcalem->Write();
   hEcalfEcalem->Write();
   hcerECALf->Write();
-  hcerECALr->Write();
+
 
   out->Close();
 
