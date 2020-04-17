@@ -116,7 +116,7 @@ private:
   G4double ecal_rear_face;
 
   G4double ecal_det_size;
-  G4int ecal_n_cell;
+
 
   
   G4UniformMagField* B_field;
@@ -149,6 +149,20 @@ private:
   G4double cSigmaalpha;
   G4double cLambertian;
   G4double cBackscatter;
+
+
+  int wrappingSurfinish;
+  TString wReffile;
+  G4double wReflectivity;
+  G4double wSurrefind;
+  int wSurtype;
+  G4double wSpecularspike;
+  G4double wSpecularlobe;
+  G4double wSigmaalpha;
+  G4double wLambertian;
+  G4double wBackscatter;
+  G4double wrapping_reflectivity;
+
 
   TString RefFile;
   G4double reflectivity;

@@ -125,7 +125,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     else{
 
       if(thePostPVName.contains("ecalDet")) {
-	std::cout<<" in detector"<<std::endl;
+	//	std::cout<<" in detector"<<std::endl;
 	CreateTree::Instance()->h_detected_photon->Fill(photWL);
 	  theTrack->SetTrackStatus(fKillTrackAndSecondaries); 
 	}

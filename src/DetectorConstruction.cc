@@ -75,7 +75,7 @@
 
 using namespace CLHEP;
 
-
+  const int NECAL_CRYST = 25;
 
 DetectorConstruction::DetectorConstruction (const string& configFileName)
 {
@@ -111,7 +111,7 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
   config.readInto(ecal_rear_face,	"ecal_rear_face");
 
 
-  config.readInto(ecal_n_cell,"ecal_n_cell");
+
 
 
   config.readInto(cReffile, "cReffile");
@@ -129,6 +129,21 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
   config.readInto(crystalSurfinish, "crystalSurfinish");
 
 
+  config.readInto(wReffile, "wReffile");
+  config.readInto(wrapping_reflectivity, "wReflectivity");
+  config.readInto(wSurrefind, "wSurrefind");
+  config.readInto(wSurtype, "wSurtype");
+  config.readInto(wSpecularspike, "wSpecularspike");
+  config.readInto(wSpecularlobe, "wSpecularlobe");
+  config.readInto(wSigmaalpha, "wSigmaalpha");
+  config.readInto(wSpecularspike, "wSpecularspike");
+  config.readInto(wSpecularlobe, "wSpecularlobe");
+  config.readInto(wSigmaalpha, "wSigmaalpha");
+  config.readInto(wBackscatter, "wBackscatter");
+  config.readInto(wLambertian, "wLambertian");
+  config.readInto(wrappingSurfinish, "wrappingSurfinish");
+
+
   
   B_field_intensity = config.read<double>("B_field_intensity") * tesla ;
   
@@ -136,8 +151,8 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
   //expHall_y = 450.*cm;
   //expHall_z = 300.*cm;
 
-  expHall_x = sqrt(ecal_n_cell)*ecal_front_length*3;
-  expHall_y = sqrt(ecal_n_cell)*ecal_front_length*3;
+  expHall_x = sqrt(NECAL_CRYST)*ecal_front_length*3;
+  expHall_y = sqrt(NECAL_CRYST)*ecal_front_length*3;
   expHall_z = 3*(ecal_front_length);
   
   B_field_IsInitialized = false ;
@@ -181,9 +196,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   //   S U R F A C E S   I N I T I A L I Z A T I O N
   //
 
-  G4LogicalBorderSurface *CrystalSurfaceSide   = NULL;
-  G4LogicalBorderSurface *CrystalSurfaceGapf      = NULL;
-  G4LogicalBorderSurface *CrystalSurfaceGapr      = NULL;
+  G4LogicalBorderSurface *CrystalSurfaceSide[NECAL_CRYST];
+  G4LogicalBorderSurface *CrystalSurfaceGapf[NECAL_CRYST];
+  G4LogicalBorderSurface *CrystalSurfaceGapr[NECAL_CRYST];
 
   G4OpticalSurface *OpWrappingSurface         = NULL;
   G4OpticalSurface *OpCrystalSurface      = NULL;
@@ -231,7 +246,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   // ECAL physical placement
   //const int NECAL_CRYST = 2500;
 
-  const int NECAL_CRYST = ecal_n_cell;
+  //const int NECAL_CRYST = ecal_n_cell;
 
   G4VPhysicalVolume* ecalCrystalP_f[NECAL_CRYST];
 
@@ -258,6 +273,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
     OpCrystalSurface = new G4OpticalSurface("crystal");
     initializeSurface(OpCrystalSurface, "crystal");
     initializeReflectivitySurface(OpCrystalSurface, "crystal");
+
+
+    OpWrappingSurface = new G4OpticalSurface("wrapping");
+    initializeSurface(OpWrappingSurface, "wrapping");
+    initializeReflectivitySurface(OpWrappingSurface, "wrapping");
+
   }
 
 
@@ -287,23 +308,19 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
       ecalCrystalP_f[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_front_length*0.5), ecalCrystalL_f, name, worldLV, false, 0);
 
 
-    CrystalSurfaceSide   = new G4LogicalBorderSurface("CrystalSurfaceSide", ecalCrystalP_f[iCrystal], worldPV, OpCrystalSurface);  
-
-
-
-
+    CrystalSurfaceSide[iCrystal]   = new G4LogicalBorderSurface("CrystalSurfaceSide", ecalCrystalP_f[iCrystal], worldPV, OpWrappingSurface);  
 
 
       sprintf(name, "ecalGapP_f_%d", iCrystal);
       ecalGapP_f[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], -1.* gap_l*0.5), ecalGapL, name, worldLV, false, 0);
 
-      //    CrystalSurfaceGapf   = new G4LogicalBorderSurface("CrystalSurfaceGapf", ecalCrystalP_f[iCrystal], ecalGapP_f[iCrystal], OpCrystalSurface);  
+      CrystalSurfaceGapf[iCrystal]   = new G4LogicalBorderSurface("CrystalSurfaceGapf", ecalCrystalP_f[iCrystal], ecalGapP_f[iCrystal], OpCrystalSurface);  
 
 
 
       ecalGapP_r[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_front_length + gap_l*0.5), ecalGapL, name, worldLV, false, 0);
 
-      //CrystalSurfaceGapr   = new G4LogicalBorderSurface("CrystalSurfaceGapr", ecalCrystalP_f[iCrystal], ecalGapP_r[iCrystal], OpCrystalSurface);  
+      CrystalSurfaceGapr[iCrystal]   = new G4LogicalBorderSurface("CrystalSurfaceGapr", ecalCrystalP_f[iCrystal], ecalGapP_r[iCrystal], OpCrystalSurface);  
 
 
 
@@ -490,6 +507,19 @@ void DetectorConstruction::initializeSurface(G4OpticalSurface *mySurface, string
         sigmaalpha  = cSigmaalpha;
         backscatter     = cBackscatter;
         lambertian  = cLambertian;
+    
+    } else if(surfaceType == "wrapping") {
+        surfinish   = wrappingSurfinish;
+        RefFile     = wReffile;
+        reflectivity    = wReflectivity;
+        surrefind   = wSurrefind;
+        surtype     = wSurtype;
+        specularspike   = wSpecularspike;
+        specularlobe    = cSpecularlobe;
+        sigmaalpha  = wSigmaalpha;
+        backscatter     = wBackscatter;
+        lambertian  = wLambertian;
+
     }
 
 
@@ -599,9 +629,17 @@ void DetectorConstruction::initializeReflectivitySurface(G4OpticalSurface *surfa
         EphotonRefl[1] = 1.0 * eV;
         EphotonRefl[2] = 4.08 * eV;
         Refl[0] = 0.0; // suppress photons with energy < 1eV (will not be detected)
-        Refl[1] = this->crystal_reflectivity;
-        Refl[2] = this->crystal_reflectivity;
-        NumRefl = 3;
+	if(surfaceType=="crystal") {
+	  Refl[1] = this->crystal_reflectivity;
+	  Refl[2] = this->crystal_reflectivity;
+	  NumRefl = 3;
+	} else if(surfaceType=="wrapping") {
+	  Refl[1] = this->wrapping_reflectivity;
+	  Refl[2] = this->wrapping_reflectivity;
+	  NumRefl = 3;
+	} else {
+	  std::cout<<"illegal reflectivity"<<std::endl;
+	}
 
 
     }
@@ -669,8 +707,8 @@ void DetectorConstruction::initializeReflectivitySurface(G4OpticalSurface *surfa
 
 
     //-----------------------------------------------------------------------------------//
-    myST->AddProperty("REALRINDEX", tyvek_rwavelength, tyvek_rindex, 19);
-    myST->AddProperty("IMAGINARYRINDEX", tyvek_cwavelength, tyvek_cindex, 29);
+    // myST->AddProperty("REALRINDEX", tyvek_rwavelength, tyvek_rindex, 19);
+    //myST->AddProperty("IMAGINARYRINDEX", tyvek_cwavelength, tyvek_cindex, 29);
 
 
     G4double air_rwavelength[1000] = {0.1 * eV, 1 * eV, 2 * eV, 3 * eV, 4 * eV};
@@ -678,8 +716,8 @@ void DetectorConstruction::initializeReflectivitySurface(G4OpticalSurface *surfa
 
     G4double air_cwavelength[1000] = {0.1 * eV, 1 * eV, 2 * eV, 3 * eV, 4 * eV};
     G4double air_cindex[1000] = {1, 1, 1, 1, 1};
-//     myST->AddProperty("REALRINDEX", air_rwavelength, air_rindex, 5);
-//     myST->AddProperty("IMAGINARYRINDEX", air_cwavelength, air_cindex, 5);
+     myST->AddProperty("REALRINDEX", air_rwavelength, air_rindex, 5);
+     myST->AddProperty("IMAGINARYRINDEX", air_cwavelength, air_cindex, 5);
 
 
 
