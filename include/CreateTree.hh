@@ -60,23 +60,20 @@ public:
 
   float depositedEnergyTotal;
   float depositedEnergyECAL_f;
-  float depositedEnergyECAL_r;
+
   float depositedEnergyEcalGap;
   float depositedEnergyEcalDet;
   float depositedEnergyWorld;
 
   float depositedIonEnergyTotal;
-  float depositedIonEnergyTiming_f;
-  float depositedIonEnergyTiming_r;
   float depositedIonEnergyECAL_f;
-  float depositedIonEnergyECAL_r;
   float depositedIonEnergyEcalGap;
   float depositedIonEnergyEcalDet;
   float depositedIonEnergyWorld;
 
   float depositedElecEnergyTotal;
   float depositedElecEnergyECAL_f;
-  float depositedElecEnergyECAL_r;
+
   float depositedElecEnergyEcalGap;
   float depositedElecEnergyEcalDet;
   float depositedElecEnergyWorld;
@@ -84,7 +81,7 @@ public:
 
 
   int tot_phot_cer_ECAL_f ;
-  int tot_phot_cer_ECAL_r ;
+
 
 
 
@@ -94,7 +91,7 @@ public:
 
   //energy deposit in each trasnversally segmented channel
   float Edep_ECAL_f_ch[2500];
-  float Edep_ECAL_r_ch[2500];
+
 
 
 
@@ -102,8 +99,9 @@ public:
 
 
   TH1F* h_phot_cer_lambda_ECAL_f ;
-  TH1F* h_phot_cer_lambda_ECAL_r;
+
   TH1F* h_phot_cer_parentID;
+  TH1F* h_detected_photon;
 
 
 };

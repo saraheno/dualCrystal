@@ -53,7 +53,7 @@ CreateTree::CreateTree (TString name)
   this -> GetTree() -> Branch("depositedEnergyEscapeWorld",     	&this->depositedEnergyEscapeWorld,        	"depositedEnergyEscapeWorld/F");
 
   this -> GetTree() -> Branch("depositedEnergyECAL_f",     &this->depositedEnergyECAL_f,            "depositedEnergyECAL_f/F");
-  this -> GetTree() -> Branch("depositedEnergyECAL_r",     &this->depositedEnergyECAL_r,            "depositedEnergyECAL_r/F");
+
 
   this -> GetTree() -> Branch("depositedEnergyWorld",     	&this->depositedEnergyWorld,         	"depositedEnergyWorld/F");
   this -> GetTree() -> Branch("depositedEnergyEcalGap",     	&this->depositedEnergyEcalGap,         	"depositedEnergyEcalGap/F");
@@ -63,7 +63,7 @@ CreateTree::CreateTree (TString name)
   this -> GetTree() -> Branch("depositedIonEnergyTotal",     	&this->depositedIonEnergyTotal,        	"depositedIonEnergyTotal/F");
 
   this -> GetTree() -> Branch("depositedIonEnergyECAL_f",     &this->depositedIonEnergyECAL_f,            "depositedIonEnergyECAL_f/F");
-  this -> GetTree() -> Branch("depositedIonEnergyECAL_r",     &this->depositedIonEnergyECAL_r,            "depositedIonEnergyECAL_r/F");
+
   this -> GetTree() -> Branch("depositedIonEnergyWorld",     	&this->depositedIonEnergyWorld,         	"depositedIonEnergyWorld/F");
   this -> GetTree() -> Branch("depositedIonEnergyEcalGap",     	&this->depositedIonEnergyEcalGap,         	"depositedIonEnergyEcalGap/F");
   this -> GetTree() -> Branch("depositedIonEnergyEcalDet",     	&this->depositedIonEnergyEcalDet,         	"depositedIonEnergyEcalDet/F");
@@ -72,7 +72,7 @@ CreateTree::CreateTree (TString name)
   this -> GetTree() -> Branch("depositedElecEnergyTotal",     	&this->depositedElecEnergyTotal,        	"depositedElecEnergyTotal/F");
 
   this -> GetTree() -> Branch("depositedElecEnergyECAL_f",     &this->depositedElecEnergyECAL_f,            "depositedElecEnergyECAL_f/F");
-  this -> GetTree() -> Branch("depositedElecEnergyECAL_r",     &this->depositedElecEnergyECAL_r,            "depositedElecEnergyECAL_r/F");
+
   this -> GetTree() -> Branch("depositedElecEnergyWorld",     	&this->depositedElecEnergyWorld,         	"depositedElecEnergyWorld/F");
   this -> GetTree() -> Branch("depositedElecEnergyEcalGap",     	&this->depositedElecEnergyEcalGap,         	"depositedElecEnergyEcalGap/F");
   this -> GetTree() -> Branch("depositedElecEnergyEcalDet",     	&this->depositedElecEnergyEcalDet,         	"depositedElecEnergyEcalDet/F");
@@ -80,19 +80,20 @@ CreateTree::CreateTree (TString name)
 
   //single channels
   this -> GetTree() -> Branch("Edep_ECAL_f_ch",   		&this->Edep_ECAL_f_ch,      			"Edep_ECAL_f_ch[100]/F");
-  this -> GetTree() -> Branch("Edep_ECAL_r_ch",   		&this->Edep_ECAL_r_ch,      			"Edep_ECAL_r_ch[100]/F");
+
   
 
   //Cerenkov photons
   this -> GetTree() -> Branch("tot_phot_cer_ECAL_f",        &this->tot_phot_cer_ECAL_f,               "tot_phot_cer_ECAL_f/I");
-  this -> GetTree() -> Branch("tot_phot_cer_ECAL_r",        &this->tot_phot_cer_ECAL_r,               "tot_phot_cer_ECAL_r/I");
+
 
 
 
 
   h_phot_cer_lambda_ECAL_f    = new TH1F("h_phot_cer_lambda_ECAL_f","",1250, 0.,1250.);
-  h_phot_cer_lambda_ECAL_r    = new TH1F("h_phot_cer_lambda_ECAL_r","",1250, 0.,1250.);
+
   h_phot_cer_parentID = new TH1F("h_phot_cer_parentID","",600,-300,300);
+  h_detected_photon = new TH1F("h_detected_photon","",500,0.,1000.);
 
 
   
@@ -126,8 +127,9 @@ bool CreateTree::Write(TFile * outfile)
 
 
   h_phot_cer_lambda_ECAL_f    ->Write();
-  h_phot_cer_lambda_ECAL_r    ->Write();
+
   h_phot_cer_parentID->Write();
+  h_detected_photon->Write();
 
   return true ;
 }
@@ -148,7 +150,7 @@ void CreateTree::Clear()
 
   depositedEnergyTotal = 0.;
   depositedEnergyECAL_f = 0.;
-  depositedEnergyECAL_r = 0.;
+
   depositedEnergyWorld = 0.;
   depositedEnergyEcalGap = 0.;
   depositedEnergyEcalDet = 0.;
@@ -156,7 +158,7 @@ void CreateTree::Clear()
 
   depositedIonEnergyTotal = 0.;
   depositedIonEnergyECAL_f = 0.;
-  depositedIonEnergyECAL_r = 0.;
+
   depositedIonEnergyWorld = 0.;
   depositedIonEnergyEcalGap = 0.;
   depositedIonEnergyEcalDet = 0.;
@@ -164,14 +166,14 @@ void CreateTree::Clear()
 
   depositedElecEnergyTotal = 0.;
   depositedElecEnergyECAL_f = 0.;
-  depositedElecEnergyECAL_r = 0.;
+
   depositedElecEnergyWorld = 0.;
   depositedElecEnergyEcalGap = 0.;
   depositedElecEnergyEcalDet = 0.;
 
 
   tot_phot_cer_ECAL_f = 0.;
-  tot_phot_cer_ECAL_r = 0.;
+
 
 
 
@@ -180,7 +182,7 @@ void CreateTree::Clear()
   for (int iCh = 0; iCh<100; iCh++)
   {
 	Edep_ECAL_f_ch[iCh] = 0.;
-	Edep_ECAL_r_ch[iCh] = 0.;
+
   }
 
   

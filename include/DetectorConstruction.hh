@@ -111,7 +111,7 @@ private:
 
   G4int ecal_material;
   G4double ecal_front_length;
-  G4double ecal_rear_length;
+
   G4double ecal_front_face;
   G4double ecal_rear_face;
 

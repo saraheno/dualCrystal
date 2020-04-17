@@ -119,6 +119,15 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
   
     G4String processName = theTrack->GetCreatorProcess()->GetProcessName();
     float photWL = MyMaterials::fromEvToNm(theTrack->GetTotalEnergy()/eV);
+      //kill very long wavelengths
+    if (photWL> 1000 ||  photWL< 300)   theTrack->SetTrackStatus(fKillTrackAndSecondaries); 
+
+    else{
+
+      if(thePostPVName.contains("ecalDet")) {
+	CreateTree::Instance()->h_detected_photon->Fill(photWL);
+	  theTrack->SetTrackStatus(fKillTrackAndSecondaries); 
+	}
         
     if(
         (nStep == 1) && (processName == "Cerenkov") )
@@ -138,19 +147,12 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
       //std::cout << " generated Cerenkov photon with parent " << theTrackInfo->GetParentName()<<" "<<aapdgid<<" with beta of "<<betaa<<" and energy "<<haha2<<std::endl;
 
 
-      //kill very long wavelengths
-      if (photWL> 1000 ||  photWL< 300)  theTrack->SetTrackStatus(fKillTrackAndSecondaries); 
 
-      else if (thePrePVName.contains("ecalCrystalP_f"))
+      if (thePrePVName.contains("ecalCrystalP_f"))
       {      
 	CreateTree::Instance()->tot_phot_cer_ECAL_f += 1;
         CreateTree::Instance()->h_phot_cer_lambda_ECAL_f -> Fill( photWL);
       }
-      else if (thePrePVName.contains("ecalCrystalP_r"))
-	{      
-	CreateTree::Instance()->tot_phot_cer_ECAL_r += 1;
-        CreateTree::Instance()->h_phot_cer_lambda_ECAL_r -> Fill( photWL );
-	}
       else if(thePrePVName.contains("ecalDet"))
 	{
 	  //	  std::cout<<"hit ecal photo detector"<<std::endl;
@@ -176,8 +178,8 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
 
     } // end nstep==1 and cerenkov
     else { // later steps
-      if (photWL> 1000 ||  photWL< 300)  theTrack->SetTrackStatus(fKillTrackAndSecondaries); 
-      else if(thePrePVName.contains("ecalDet"))
+
+      if(thePrePVName.contains("ecalDet"))
 	{
 	  //	  std::cout<<"hit ecal photo detector"<<std::endl;
 	  theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
@@ -200,6 +202,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
       //      std::cout<<nStep<<" "<<processName<<" "<<thePrePVName<<std::endl;
 
     }
+    }
   }  // end optical photon
 
     else{
@@ -218,16 +221,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
 	if (thePrePVName == Form("ecalCrystalP_f_%d", iCh)) CreateTree::Instance()->Edep_ECAL_f_ch[iCh] += energy/GeV;
       }
     }
-    if( thePrePVName.contains("ecalCrystalP_r") )
-    {
-      CreateTree::Instance()->depositedEnergyECAL_r += energy/GeV;
-      CreateTree::Instance()->depositedIonEnergyECAL_r += energyIon/GeV;
-      CreateTree::Instance()->depositedElecEnergyECAL_r += energyElec/GeV;
-      for (int iCh = 0; iCh<2500; iCh++)
-      {
-	if (thePrePVName == Form("ecalCrystalP_r_%d", iCh)) CreateTree::Instance()->Edep_ECAL_r_ch[iCh] += energy/GeV;
-      }
-    }    
+
 
 
 

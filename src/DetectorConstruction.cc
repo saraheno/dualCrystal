@@ -106,9 +106,10 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
 
   config.readInto(ecal_material, 	"ecal_material");
   config.readInto(ecal_front_length,"ecal_front_length");
-  config.readInto(ecal_rear_length, "ecal_rear_length");
+
   config.readInto(ecal_front_face,	"ecal_front_face");
   config.readInto(ecal_rear_face,	"ecal_rear_face");
+
 
   config.readInto(ecal_n_cell,"ecal_n_cell");
 
@@ -137,7 +138,7 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
 
   expHall_x = sqrt(ecal_n_cell)*ecal_front_length*3;
   expHall_y = sqrt(ecal_n_cell)*ecal_front_length*3;
-  expHall_z = 3*(ecal_front_length+ecal_rear_length);
+  expHall_z = 3*(ecal_front_length);
   
   B_field_IsInitialized = false ;
   
@@ -145,7 +146,7 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
 
 
   CreateTree::Instance() -> inputE1Thick 		= ecal_front_length; 
-  CreateTree::Instance() -> inputE2Thick 		= ecal_rear_length; 
+
   CreateTree::Instance() -> inputE1Width 		= ecal_front_face; 
 
 
@@ -210,14 +211,14 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   
   // ECAL solid
   G4Trd* ecalCrystalS_f = new G4Trd("ecalCrystalS_f",0.5*ecal_front_face, 0.5*ecal_rear_face, 0.5*ecal_front_face , 0.5*ecal_rear_face, 0.5*ecal_front_length);
-  G4Trd* ecalCrystalS_r = new G4Trd("ecalCrystalS_r",0.5*ecal_front_face, 0.5*ecal_rear_face, 0.5*ecal_front_face , 0.5*ecal_rear_face, 0.5*ecal_rear_length);
+
   G4Box* ecalGapS      = new G4Box("ecalGapS",      ecal_det_size*0.5, ecal_det_size*0.5, 0.5*(gap_l-depth) );
   G4Box* ecalDetS      = new G4Box("ecalDetS",      ecal_det_size*0.5, ecal_det_size*0.5, 0.5*(det_l-depth));
   
   
   // ECAL logic
   G4LogicalVolume* ecalCrystalL_f = new G4LogicalVolume(ecalCrystalS_f, EcalMaterial, "ecalCrystalL_f", 0, 0, 0);
-  G4LogicalVolume* ecalCrystalL_r = new G4LogicalVolume(ecalCrystalS_r, EcalMaterial, "ecalCrystalL_r", 0, 0, 0);
+
 
   // gaps
   G4LogicalVolume* ecalGapL	 = new G4LogicalVolume(ecalGapS, GaMaterial, "ecalGapL", 0, 0, 0);
@@ -232,11 +233,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   const int NECAL_CRYST = ecal_n_cell;
 
   G4VPhysicalVolume* ecalCrystalP_f[NECAL_CRYST];
-  G4VPhysicalVolume* ecalCrystalP_r[NECAL_CRYST];
+
   G4VPhysicalVolume* ecalGapP_f[NECAL_CRYST];
   G4VPhysicalVolume* ecalGapP_r[NECAL_CRYST];
+
   G4VPhysicalVolume* ecalDetP_f[NECAL_CRYST];
   G4VPhysicalVolume* ecalDetP_r[NECAL_CRYST];
+
   
   char name[60];
 
@@ -287,20 +290,19 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
 
 
 
-      sprintf(name, "ecalCrystalP_r_%d", iCrystal);
-      ecalCrystalP_r[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_front_length + 2*gap_l+2*det_l+ecal_rear_length*0.5), ecalCrystalL_r, name, worldLV, false, 0);
+
 
       sprintf(name, "ecalGapP_f_%d", iCrystal);
       ecalGapP_f[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], -1.* gap_l*0.5), ecalGapL, name, worldLV, false, 0);
 
-      sprintf(name, "ecalGapP_r_%d", iCrystal);
-      ecalGapP_r[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_front_length +  + 2*gap_l+2*det_l+ecal_rear_length + gap_l*0.5), ecalGapL, name, worldLV, false, 0);
+
+      ecalGapP_r[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_front_length + gap_l*0.5), ecalGapL, name, worldLV, false, 0);
 
       sprintf(name, "ecalDetP_f_%d", iCrystal);
       ecalDetP_f[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], -1.* gap_l - det_l*0.5), ecalDetL, name, worldLV, false, 0);
 
       sprintf(name, "ecalDetP_r_%d", iCrystal);
-      ecalDetP_r[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_front_length + ecal_rear_length +  + 2*gap_l+2*det_l+gap_l + det_l*0.5), ecalDetL, name, worldLV, false, 0);
+      ecalDetP_r[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_front_length +gap_l + det_l*0.5), ecalDetL, name, worldLV, false, 0);
 
     }
   }
@@ -341,10 +343,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   VisCrystalCore -> SetForceWireframe(true);
   ecalCrystalL_f -> SetVisAttributes(VisCrystalCore);
 
-  G4VisAttributes* VisCrystalCore_r = new G4VisAttributes(blue);
-  VisCrystalCore_r -> SetVisibility(true);
-  VisCrystalCore_r -> SetForceWireframe(true);
-  ecalCrystalL_r -> SetVisAttributes(VisCrystalCore_r);
+
 
 
 
