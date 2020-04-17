@@ -118,7 +118,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
   {
   
     G4String processName = theTrack->GetCreatorProcess()->GetProcessName();
-
+    float photWL = MyMaterials::fromEvToNm(theTrack->GetTotalEnergy()/eV);
         
     if(
         (nStep == 1) && (processName == "Cerenkov") )
@@ -136,13 +136,10 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
 
       
       //std::cout << " generated Cerenkov photon with parent " << theTrackInfo->GetParentName()<<" "<<aapdgid<<" with beta of "<<betaa<<" and energy "<<haha2<<std::endl;
-      float photWL = MyMaterials::fromEvToNm(theTrack->GetTotalEnergy()/eV);
+
 
       //kill very long wavelengths
       if (photWL> 1000 ||  photWL< 300)  theTrack->SetTrackStatus(fKillTrackAndSecondaries); 
-
-
-
 
       else if (thePrePVName.contains("ecalCrystalP_f"))
       {      
@@ -162,7 +159,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
       else if(thePrePVName.contains("ecalGap"))
 	{
 	  //	  std::cout<<"hit ecal photo detector"<<std::endl;
-	  theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
+	  //theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
 	}
       else if(thePrePVName.contains("world"))
 	{
@@ -173,12 +170,37 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
 	{
 	  std::cout<<"weird PrePVName "<<thePrePVName<<std::endl;
 	}
-
+      if( thePostPVName.contains("world") ) theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
 
       if( !propagateCerenkov ) theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
 
+    } // end nstep==1 and cerenkov
+    else { // later steps
+      if (photWL> 1000 ||  photWL< 300)  theTrack->SetTrackStatus(fKillTrackAndSecondaries); 
+      else if(thePrePVName.contains("ecalDet"))
+	{
+	  //	  std::cout<<"hit ecal photo detector"<<std::endl;
+	  theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
+	}
+      else if(thePrePVName.contains("ecalGap"))
+	{
+	  //	  std::cout<<"hit ecal photo detector"<<std::endl;
+	  //theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
+	}
+      else if(thePrePVName.contains("world"))
+	{
+	  //	  std::cout<<"hit ecal photo detector"<<std::endl;
+	  theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
+	}
+      else 
+	{
+	  std::cout<<"weird PrePVName "<<thePrePVName<<std::endl;
+	}
+      if( thePostPVName.contains("world") ) theTrack->SetTrackStatus(fKillTrackAndSecondaries);     
+      //      std::cout<<nStep<<" "<<processName<<" "<<thePrePVName<<std::endl;
+
     }
-  }
+  }  // end optical photon
 
     else{
 
