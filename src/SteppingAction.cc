@@ -125,6 +125,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     else{
 
       if(thePostPVName.contains("ecalDet")) {
+	std::cout<<" in detector"<<std::endl;
 	CreateTree::Instance()->h_detected_photon->Fill(photWL);
 	  theTrack->SetTrackStatus(fKillTrackAndSecondaries); 
 	}
@@ -149,30 +150,32 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
 
 
       if (thePrePVName.contains("ecalCrystalP_f"))
-      {      
-	CreateTree::Instance()->tot_phot_cer_ECAL_f += 1;
-        CreateTree::Instance()->h_phot_cer_lambda_ECAL_f -> Fill( photWL);
-      }
+	{      
+	  CreateTree::Instance()->tot_phot_cer_ECAL_f += 1;
+	  CreateTree::Instance()->h_phot_cer_lambda_ECAL_f -> Fill( photWL);
+	}
       else if(thePrePVName.contains("ecalDet"))
 	{
+	  //std::cout<<" inside detector"<<std::endl;
 	  //	  std::cout<<"hit ecal photo detector"<<std::endl;
-	  theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
+	  //	  theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
 	}
       else if(thePrePVName.contains("ecalGap"))
 	{
+	  //std::cout<<" inside gap"<<std::endl;
 	  //	  std::cout<<"hit ecal photo detector"<<std::endl;
 	  //theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
 	}
       else if(thePrePVName.contains("world"))
 	{
 	  //	  std::cout<<"hit ecal photo detector"<<std::endl;
-	  theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
+	  //theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
 	}
       else 
 	{
 	  std::cout<<"weird PrePVName "<<thePrePVName<<std::endl;
 	}
-      if( thePostPVName.contains("world") ) theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
+      //if( thePostPVName.contains("world") ) theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
 
       if( !propagateCerenkov ) theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
 
@@ -181,31 +184,33 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
 
       if(thePrePVName.contains("ecalDet"))
 	{
+	  //std::cout<<"inside detector"<<std::endl;
 	  //	  std::cout<<"hit ecal photo detector"<<std::endl;
 	  theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
 	}
       else if(thePrePVName.contains("ecalGap"))
 	{
+	  //std::cout<<"inside gap"<<std::endl;
 	  //	  std::cout<<"hit ecal photo detector"<<std::endl;
 	  //theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
 	}
       else if(thePrePVName.contains("world"))
 	{
 	  //	  std::cout<<"hit ecal photo detector"<<std::endl;
-	  theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
+	  //theTrack->SetTrackStatus(fKillTrackAndSecondaries);      
 	}
       else 
 	{
-	  std::cout<<"weird PrePVName "<<thePrePVName<<std::endl;
+	  // std::cout<<"weird PrePVName "<<thePrePVName<<std::endl;
 	}
-      if( thePostPVName.contains("world") ) theTrack->SetTrackStatus(fKillTrackAndSecondaries);     
+      //if( thePostPVName.contains("world") ) theTrack->SetTrackStatus(fKillTrackAndSecondaries);     
       //      std::cout<<nStep<<" "<<processName<<" "<<thePrePVName<<std::endl;
 
     }
     }
   }  // end optical photon
 
-    else{
+  else{
 
 
 

@@ -181,8 +181,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   //   S U R F A C E S   I N I T I A L I Z A T I O N
   //
 
-  G4LogicalBorderSurface *CrystalSurfaceTop   = NULL;
-  G4LogicalBorderSurface *TopWrappingSurface      = NULL;
+  G4LogicalBorderSurface *CrystalSurfaceSide   = NULL;
+  G4LogicalBorderSurface *CrystalSurfaceGapf      = NULL;
+  G4LogicalBorderSurface *CrystalSurfaceGapr      = NULL;
 
   G4OpticalSurface *OpWrappingSurface         = NULL;
   G4OpticalSurface *OpCrystalSurface      = NULL;
@@ -286,7 +287,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
       ecalCrystalP_f[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_front_length*0.5), ecalCrystalL_f, name, worldLV, false, 0);
 
 
-    CrystalSurfaceTop   = new G4LogicalBorderSurface("CrystalSurfaceTop", ecalCrystalP_f[iCrystal], worldPV, OpCrystalSurface);  
+    CrystalSurfaceSide   = new G4LogicalBorderSurface("CrystalSurfaceSide", ecalCrystalP_f[iCrystal], worldPV, OpCrystalSurface);  
+
 
 
 
@@ -295,8 +297,15 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
       sprintf(name, "ecalGapP_f_%d", iCrystal);
       ecalGapP_f[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], -1.* gap_l*0.5), ecalGapL, name, worldLV, false, 0);
 
+      //    CrystalSurfaceGapf   = new G4LogicalBorderSurface("CrystalSurfaceGapf", ecalCrystalP_f[iCrystal], ecalGapP_f[iCrystal], OpCrystalSurface);  
+
+
 
       ecalGapP_r[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_front_length + gap_l*0.5), ecalGapL, name, worldLV, false, 0);
+
+      //CrystalSurfaceGapr   = new G4LogicalBorderSurface("CrystalSurfaceGapr", ecalCrystalP_f[iCrystal], ecalGapP_r[iCrystal], OpCrystalSurface);  
+
+
 
       sprintf(name, "ecalDetP_f_%d", iCrystal);
       ecalDetP_f[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], -1.* gap_l - det_l*0.5), ecalDetL, name, worldLV, false, 0);
