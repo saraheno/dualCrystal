@@ -80,6 +80,25 @@ public:
   void initializeSurface(G4OpticalSurface *,string);
   void initializeReflectivitySurface(G4OpticalSurface *, string);
   
+  G4OpticalSurface* MakeS_TyvekCrystal();
+  G4OpticalSurface* MakeS_ESR();
+  G4OpticalSurface* MakeS_IdealTyvekCrystal();
+  G4OpticalSurface* MakeS_UnifiedTyvek();
+  G4OpticalSurface* MakeS_IdealTyvek();
+  G4OpticalSurface* MakeS_Polished();
+  G4OpticalSurface* MakeS_IdealPolished();
+  G4OpticalSurface* MakeS_Mirror();
+  G4OpticalSurface* MakeS_IdealMirror();
+  G4OpticalSurface* MakeS_IdealWhiteSurface();
+  G4OpticalSurface* MakeS_Absorbing();
+  G4OpticalSurface* MakeS_Rough();
+  G4OpticalSurface* MakeS_SiPM();
+  G4OpticalSurface* MakeS_PCBSurface();
+  G4OpticalSurface* MakeS_AirAir();
+
+
+
+
   Fiber* GetFiber() { return &fib; };
   
   
@@ -91,7 +110,7 @@ private:
   G4double  expHall_z;
   
   G4int    world_material;
-  G4double bar_length;      
+ G4double bar_length;      
   G4int    detector;
   
 
