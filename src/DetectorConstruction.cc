@@ -259,7 +259,11 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   G4VPhysicalVolume* ecalDetP_r[NECAL_CRYST];
 
   
-  char name[60];
+  char name1[60];
+  char name2[60];
+  char name3[60];
+  char name4[60];
+  char name5[60];
 
   G4double x_pos[NECAL_CRYST];
   G4double y_pos[NECAL_CRYST];
@@ -301,36 +305,31 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
       G4RotationMatrix* piRotEcal = new G4RotationMatrix;
       piRotEcal->rotateY(-pointingAngle*rad*(iX + 0.5));
       piRotEcal->rotateX(pointingAngle*rad*(iY + 0.5));
-
-      
-
+     
       cout << " x_pos [" <<setw(3)<<iCrystal << "] = " <<setw(8)<< x_pos[iCrystal] << " :: y_pos[" <<setw(3)<< iCrystal << "] = " <<setw(8)<<y_pos[iCrystal] <<" "<<iX<<" "<<iY<<" "<<off<< endl;
       
-      sprintf(name, "ecalCrystalP_f_%d", iCrystal);
-      ecalCrystalP_f[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_front_length*0.5), ecalCrystalL_f, name, worldLV, false, 0);
-
-
+      sprintf(name1, "ecalCrystalP_f_%d", iCrystal);
+      ecalCrystalP_f[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_front_length*0.5), ecalCrystalL_f, name1, worldLV, false, 0);
     CrystalSurfaceSide[iCrystal]   = new G4LogicalBorderSurface("CrystalSurfaceSide", ecalCrystalP_f[iCrystal], worldPV, OpWrappingSurface);  
 
 
-      sprintf(name, "ecalGapP_f_%d", iCrystal);
-      ecalGapP_f[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], -1.* gap_l*0.5), ecalGapL, name, worldLV, false, 0);
-
+      sprintf(name2, "ecalGapP_f_%d", iCrystal);
+      ecalGapP_f[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], -1.* gap_l*0.5), ecalGapL, name2, worldLV, false, 0);
       CrystalSurfaceGapf[iCrystal]   = new G4LogicalBorderSurface("CrystalSurfaceGapf", ecalCrystalP_f[iCrystal], ecalGapP_f[iCrystal], OpCrystalSurface);  
 
 
-
-      ecalGapP_r[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_front_length + gap_l*0.5), ecalGapL, name, worldLV, false, 0);
-
+      sprintf(name3, "ecalGapP_r_%d", iCrystal);
+      ecalGapP_r[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_front_length + gap_l*0.5), ecalGapL, name3, worldLV, false, 0);
       CrystalSurfaceGapr[iCrystal]   = new G4LogicalBorderSurface("CrystalSurfaceGapr", ecalCrystalP_f[iCrystal], ecalGapP_r[iCrystal], OpCrystalSurface);  
 
 
+      sprintf(name4, "ecalDetP_f_%d", iCrystal);
+      ecalDetP_f[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], -1.* gap_l - det_l*0.5), ecalDetL, name4, worldLV, false, 0);
+      CrystalSurfaceGapr[iCrystal]   = new G4LogicalBorderSurface("CrystalSurfaceGapr", ecalGapP_f[iCrystal], ecalDetP_f[iCrystal], OpCrystalSurface);  
 
-      sprintf(name, "ecalDetP_f_%d", iCrystal);
-      ecalDetP_f[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], -1.* gap_l - det_l*0.5), ecalDetL, name, worldLV, false, 0);
-
-      sprintf(name, "ecalDetP_r_%d", iCrystal);
-      ecalDetP_r[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_front_length +gap_l + det_l*0.5), ecalDetL, name, worldLV, false, 0);
+      sprintf(name5, "ecalDetP_r_%d", iCrystal);
+      ecalDetP_r[iCrystal] = new G4PVPlacement(piRotEcal, G4ThreeVector(x_pos[iCrystal], y_pos[iCrystal], ecal_front_length +gap_l + det_l*0.5), ecalDetL, name5, worldLV, false, 0);
+      CrystalSurfaceGapr[iCrystal]   = new G4LogicalBorderSurface("CrystalSurfaceGapr", ecalGapP_r[iCrystal], ecalDetP_r[iCrystal], OpCrystalSurface);  
 
     }
   }
