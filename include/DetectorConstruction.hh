@@ -98,8 +98,7 @@ private:
   
   G4int    gap_material;
   G4double gap_l;
-  G4double gap_size_x;
-  G4double gap_size_y;
+
   
   G4int    det_material;
   G4double det_l;

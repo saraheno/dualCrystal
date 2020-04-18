@@ -93,8 +93,6 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
 
   // gap between crystal and photodetector
   config.readInto(gap_l,         		"gap_l");
-  config.readInto(gap_size_x,    	"gap_size_x");
-  config.readInto(gap_size_y,    	"gap_size_y");
   config.readInto(gap_material,  	"gap_material");
   
   config.readInto(det_l,         		"det_l");
@@ -230,7 +228,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   // ECAL solid
   G4Trd* ecalCrystalS_f = new G4Trd("ecalCrystalS_f",0.5*ecal_front_face, 0.5*ecal_rear_face, 0.5*ecal_front_face , 0.5*ecal_rear_face, 0.5*ecal_front_length);
 
-  G4Box* ecalGapS      = new G4Box("ecalGapS",      ecal_det_size*0.5, ecal_det_size*0.5, 0.5*(gap_l-depth) );
+  G4Box* ecalGapS      = new G4Box("ecalGapS",      ecal_front_face*0.5, ecal_rear_face*0.5, 0.5*(gap_l-depth) );  // depth allows for a small air gap between materials.  normally 0
   G4Box* ecalDetS      = new G4Box("ecalDetS",      ecal_det_size*0.5, ecal_det_size*0.5, 0.5*(det_l-depth));
   
   
@@ -369,6 +367,18 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   VisCrystalCore -> SetVisibility(true);
   VisCrystalCore -> SetForceWireframe(true);
   ecalCrystalL_f -> SetVisAttributes(VisCrystalCore);
+
+
+  G4VisAttributes* VisGapCore = new G4VisAttributes(green);
+  VisGapCore -> SetVisibility(true);
+  VisGapCore -> SetForceWireframe(true);
+  ecalGapL -> SetVisAttributes(VisGapCore);
+
+
+  G4VisAttributes* VisDetCore = new G4VisAttributes(magenta);
+  VisDetCore -> SetVisibility(true);
+  VisDetCore -> SetForceWireframe(true);
+  ecalDetL -> SetVisAttributes(VisDetCore);
 
 
 
