@@ -295,6 +295,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   else if(surConfig == 2) {
     OpCrystalSurface = MakeS_IdealPolished();
     OpWrappingSurface = MakeS_TyvekCrystal();
+
+
   }
   else {
     std::cout<<" you should not be here"<<std::endl;
