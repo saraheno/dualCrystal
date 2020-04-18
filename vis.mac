@@ -12,6 +12,11 @@
 # Draw geometry:
 /vis/drawVolume
 
+
+# moving around
+#/vis/viewer/pan 0.1 0
+#/vis/viewer/pan 0 0.1
+
 # Specify view angle:
 # from above
 #/vis/viewer/set/upVector 0 0 1

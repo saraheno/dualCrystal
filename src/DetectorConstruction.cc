@@ -113,6 +113,8 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
 
 
 
+  config.readInto(surConfig, "surConfig");
+
 
   config.readInto(cReffile, "cReffile");
   config.readInto(crystal_reflectivity, "cReflectivity");
@@ -266,7 +268,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
 
   if(surConfig == 0) {
     //Nothing - Crystal completely polished
-    
+    std::cout<<"why are you here?"<<std::endl;
   } else if(surConfig == 1) {
     cout << "Configuring a naked crystal, with only a tiny wrapping" << endl;
     /*-------CRYSTAL SURFACE-------*/
@@ -496,7 +498,7 @@ void DetectorConstruction::SetMaxStep(G4double maxStep)
 void DetectorConstruction::initializeSurface(G4OpticalSurface *mySurface, string surfaceType)
 {
     if(surfaceType == "crystal") {
-//         cout << "CRISTALLO " << crystalSurfinish << endl;
+         cout << "CRISTALLO " << crystalSurfinish << endl;
         surfinish   = crystalSurfinish;
         RefFile     = cReffile;
         reflectivity    = cReflectivity;
@@ -509,6 +511,7 @@ void DetectorConstruction::initializeSurface(G4OpticalSurface *mySurface, string
         lambertian  = cLambertian;
     
     } else if(surfaceType == "wrapping") {
+         cout << "wrapping " << wrappingSurfinish << endl;
         surfinish   = wrappingSurfinish;
         RefFile     = wReffile;
         reflectivity    = wReflectivity;
@@ -601,7 +604,7 @@ void DetectorConstruction::initializeSurface(G4OpticalSurface *mySurface, string
 //
 void DetectorConstruction::initializeReflectivitySurface(G4OpticalSurface *surface, string surfaceType)
 {
-
+  std::cout<<"initializing reflectivities"<<std::endl;
     int NumRefl = 0;
     G4double EphotonRefl[1000];
     G4double Refl[1000];
