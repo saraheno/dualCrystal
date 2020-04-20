@@ -294,7 +294,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   }  
   else if(surConfig == 2) {
     OpCrystalSurface = MakeS_IdealPolished();
-    OpWrappingSurface = MakeS_TyvekCrystal();
+    OpWrappingSurface = MakeS_IdealTyvek();
 
 
   }
